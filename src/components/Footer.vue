@@ -20,7 +20,6 @@ const logo = new URL('../assets/Logos/Kreassi/White - Kreassi Logo.png', import.
             <div class="grid grid-cols-1 gap-10 md:grid-cols-2">
                 <!-- Left: Logo + CTA -->
                 <div class="space-y-6">
-                    <!-- Dummy logo -->
                     <div class="flex items-center gap-2">
                         <img :src="logo" alt="Kreassi Logo" class="h-10 w-auto" />
                     </div>
@@ -33,7 +32,7 @@ const logo = new URL('../assets/Logos/Kreassi/White - Kreassi Logo.png', import.
                     </div>
 
                     <nav aria-label="Social links" class="flex items-center gap-4">
-                        <a v-for="s in socials" :key="s.name" :href="s.href" class="group inline-flex h-12 w-12 md:h-10 md:w-10 sm:h-8 sm:w-8 items-center justify-center rounded-full bg-white text-[#35164F] transition
+                        <a v-for="s in socials" :key="s.name" :href="s.href" class="group inline-flex h-8 w-8 md:h-10 md:w-10 sm:h-8 sm:w-8 items-center justify-center rounded-full bg-white text-[#35164F] transition
                  hover:bg-[#35164F] hover:text-white" :aria-label="s.name" target="_blank" rel="noopener">
                             <Icon :icon="s.icon" class="h-[clamp(18px,2.4vw,24px)] w-[clamp(18px,2.4vw,24px)]" />
                         </a>

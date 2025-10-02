@@ -1,28 +1,30 @@
 <template>
-    <section id="home" class="hero min-h-[calc(100svh-var(--header-h,4rem))] bg-base-200">
-        <div class="hero-overlay bg-base-100/10"></div>
+    <section ref="sectionRef" id="home"
+        class="hero flex flex-col items-center justify-center py-8 px-4 sm:px-6 lg:px-8">
+        <div class="hero-overlay"></div>
 
-        <div class="hero-content w-full max-w-none text-center px-4 sm:px-6 lg:px-8">
+        <div class="hero-content w-full max-w-none text-center">
             <div class="w-full">
                 <!-- Video card -->
                 <div class="card glass mx-auto w-full max-w-lg sm:max-w-xl md:max-w-2xl lg:max-w-4xl pt-8">
                     <div class="relative aspect-video overflow-hidden rounded-box">
                         <!-- Active player (YouTube) -->
-                        <iframe v-if="isPlaying && isYouTube" :src="embedUrl" class="absolute inset-0 h-full w-full"
-                            frameborder="0"
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                            allowfullscreen @load="onVideoLoad" title="Hero video">
+                        <iframe v-if="isPlaying && isYouTube" :src="embedUrl"
+                            class="absolute inset-0 h-full w-full rounded-lg" frameborder="0"
+                            allow="autoplay; encrypted-media; gyroscope; picture-in-picture" @load="onVideoLoad"
+                            title="Hero video">
                         </iframe>
 
                         <!-- Active player (local file/url) -->
-                        <video v-else-if="isPlaying && !isYouTube" :src="currentUrl" :poster="posterUrl || undefined"
-                            class="absolute inset-0 h-full w-full object-cover" autoplay muted playsinline controls loop
-                            @loadeddata="onVideoLoad">
+                        <video ref="videoRef" v-else-if="isPlaying && !isYouTube" :src="currentUrl"
+                            :poster="posterUrl || undefined" class="absolute inset-0 h-full w-full object-cover"
+                            :autoplay="isVisible" playsinline loop muted @loadeddata="onVideoLoad"
+                            @play="handleVideoPlay" @pause="handleVideoPause">
                         </video>
 
-                        <!-- Thumbnail / Play surface -->
-                        <button v-else type="button" class="absolute inset-0 group cursor-pointer" @click="play"
-                            aria-label="Play featured video">
+                        <!-- Thumbnail / Play surface (shown when not playing) -->
+                        <button v-if="!isPlaying" type="button" class="absolute inset-0 group cursor-pointer"
+                            @click="play" aria-label="Play featured video">
                             <img :src="thumbUrl" alt="Video thumbnail" class="h-full w-full object-cover"
                                 loading="eager" decoding="async" />
                             <div
@@ -36,11 +38,16 @@
                                 </span>
                             </div>
                         </button>
+
+                        <!-- Overlay for local video when paused but visible (to hide video while paused) -->
+                        <div v-if="!isYouTube && !isPlaying && isVisible"
+                            class="absolute inset-0 bg-black pointer-events-none"></div>
                     </div>
                 </div>
 
                 <!-- Heading -->
-                <h1 class="mt-6 md:mt-8 text-white leading-tight flex items-baseline gap-x-2 justify-center flex-wrap">
+                <h1
+                    class="lg:mb-4 mt-6 md:mt-8 text-white leading-tight flex items-baseline gap-x-2 justify-center flex-wrap">
                     <span class="font-hero-title font-bold text-2xl sm:text-3xl md:text-4xl lg:text-5xl">Discover A
                         Difference</span>
                     <span class="font-hero-text text-base sm:text-lg md:text-2xl lg:text-3xl opacity-90">with Kreassi
@@ -52,7 +59,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue'
 
 /* ---------- 1) Configure your source here ---------- */
 // Toggle this if you want auto-start without click
@@ -61,13 +68,13 @@ const AUTOPLAY = true
 // OPTION A: Local/hosted file
 const localPath = new URL('../../assets/Images/Videos/HomeVideo.mp4', import.meta.url).href
 // OPTION B: YouTube link example
-const youtubePath = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ'
+const youtubePath = 'https://youtu.be/HLemPV3M7IE'
 
 const src = ref(youtubePath) // Change to localPath to use local video
 
 // Poster (used for local video + thumbnail fallback)
-import heroPoster from '../assets/Images/AboutUs/AboutUs2x1.JPG'
-const posterUrl = ref(heroPoster)
+// import heroPoster from '../assets/Images/AboutUs/AboutUs2x1.JPG'
+const posterUrl = ref(null)
 
 /* ---------- 2) YouTube detection + embed URL ---------- */
 const YT_REGEX = /(?:youtube\.com\/(?:watch\?v=|shorts\/|embed\/)|youtu\.be\/)([^&\n?#]+)/i
@@ -80,7 +87,7 @@ const videoId = computed(() => {
 
 const embedUrl = computed(() =>
     isYouTube.value && videoId.value
-        ? `https://www.youtube.com/embed/${videoId.value}?autoplay=1&rel=0&playsinline=1&mute=1&controls=1&modestbranding=1`
+        ? `https://www.youtube.com/embed/${videoId.value}?autoplay=1&rel=0&playsinline=1&controls=0&modestbranding=1&showinfo=0&fs=0`
         : ''
 )
 
@@ -97,12 +104,77 @@ const thumbUrl = computed(() => {
 
 /* ---------- 3) Playback state + handlers ---------- */
 const isPlaying = ref(false)
-function play() { isPlaying.value = true }
-function onVideoLoad() { /* noop */ }
+const wasPlaying = ref(false)
+const isVisible = ref(true)
+const sectionRef = ref(null)
+const videoRef = ref(null)
 
-// Start immediately if AUTOPLAY is true
-onMounted(() => {
-    if (AUTOPLAY) isPlaying.value = true
+function play() {
+    isPlaying.value = true
+    wasPlaying.value = true
+    if (!isYouTube.value && videoRef.value) {
+        videoRef.value.play().catch(e => console.warn('Play failed:', e))
+    }
+}
+
+function handleVideoPlay() {
+    isPlaying.value = true
+    wasPlaying.value = true
+}
+
+function handleVideoPause() {
+    isPlaying.value = false
+}
+
+function onVideoLoad() {
+    // noop - can add loading state if needed
+}
+
+// Intersection Observer for visibility detection
+let observer = null
+onMounted(async () => {
+    await nextTick()
+    if (sectionRef.value) {
+        observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                isVisible.value = entry.isIntersecting
+                if (entry.isIntersecting) {
+                    // Resume if previously playing
+                    if (!isPlaying.value && wasPlaying.value) {
+                        play()
+                    }
+                } else {
+                    // Stop/pause when scrolled away
+                    if (isPlaying.value) {
+                        if (isYouTube.value) {
+                            // For YouTube, hide iframe to stop (will restart on resume)
+                            isPlaying.value = false
+                        } else if (videoRef.value) {
+                            // For local, pause but keep mounted to preserve time
+                            videoRef.value.pause()
+                            isPlaying.value = false
+                        }
+                    }
+                }
+            })
+        }, { threshold: 0.5 }) // Trigger when 50% of section is visible
+
+        observer.observe(sectionRef.value)
+    }
+
+    // Start immediately if AUTOPLAY is true and visible
+    if (AUTOPLAY && isVisible.value) {
+        play()
+    }
+})
+
+onUnmounted(() => {
+    if (observer) {
+        observer.disconnect()
+    }
+    if (videoRef.value) {
+        videoRef.value.pause()
+    }
 })
 </script>
 
