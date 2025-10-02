@@ -1,6 +1,9 @@
 <script setup>
-const DIR = '../../assets/Images/Services/Logo Design'
-const imgs = [1, 2, 3].map(n => new URL(`${DIR}/${n}.png`, import.meta.url).href)
+import img1 from '../../assets/Images/Services/Logo Design/1.png'
+import img2 from '../../assets/Images/Services/Logo Design/2.png'
+import img3 from '../../assets/Images/Services/Logo Design/3.png'
+
+const imgs = [img1, img2, img3]
 
 </script>
 

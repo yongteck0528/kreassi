@@ -1,7 +1,10 @@
 <script setup>
-// same source as you had
-const DIR = '../../assets/Images/Services/Marketing Campaign'
-const videos = [1, 2, 3].map(n => new URL(`${DIR}/${n}.mp4`, import.meta.url).href)
+
+import img1 from '../../assets/Images/Services/Marketing Campaign/1.mp4'
+import img2 from '../../assets/Images/Services/Marketing Campaign/2.mp4'
+import img3 from '../../assets/Images/Services/Marketing Campaign/3.mp4'
+
+const videos = [img1, img2, img3]
 </script>
 
 <template>

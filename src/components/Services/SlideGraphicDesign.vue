@@ -1,6 +1,15 @@
 <script setup>
-const DIR = '../../assets/Images/Services/Graphic Design'
-const imgs = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13].map(n => new URL(`${DIR}/${n}.png`, import.meta.url).href)
+const modules = import.meta.glob('../../assets/Images/Services/Graphic Design/*.png', { eager: true })
+
+// Extract just the URLs and sort them by filename
+const imgs = Object.keys(modules)
+  .sort((a, b) => {
+    // extract the numbers (1,2,3,...) to keep correct order
+    const numA = parseInt(a.match(/(\d+)\.png$/)[1])
+    const numB = parseInt(b.match(/(\d+)\.png$/)[1])
+    return numA - numB
+  })
+  .map((key) => modules[key].default)
 </script>
 
 <template>

@@ -1,11 +1,14 @@
 <script setup>
-const DIR = '../../assets/Images/Services/Content Creation'
-const imgs = [1, 2, 3].map(n => new URL(`${DIR}/${n}.png`, import.meta.url).href)
+import img1 from '../../assets/Images/Services/Content Creation/1.png'
+import img2 from '../../assets/Images/Services/Content Creation/2.png'
+import img3 from '../../assets/Images/Services/Content Creation/3.png'
+
+const imgs = [img1, img2, img3]
 
 const visibleClass = (i) => {
-    if (i === 2) return 'hidden lg:block'   // #3: desktop only
-    if (i === 1) return 'hidden md:block'   // #2: tablet+ only
-    return ''                               // #1: always
+  if (i === 2) return 'hidden lg:block'   // #3: desktop only
+  if (i === 1) return 'hidden md:block'   // #2: tablet+ only
+  return ''                               // #1: always
 }
 </script>
 

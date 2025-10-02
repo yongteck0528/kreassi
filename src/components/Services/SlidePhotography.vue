@@ -1,6 +1,6 @@
 <script setup>
-const DIR = '../../assets/Images/Services/Photography'
-const img1 = new URL(`${DIR}/1.png`, import.meta.url).href
+import img1 from '../../assets/Images/Services/Photography/1.png'
+
 </script>
 
 <template>

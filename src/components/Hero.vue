@@ -18,7 +18,7 @@
                         <!-- Active player (local file/url) -->
                         <video ref="videoRef" v-else-if="isPlaying && !isYouTube" :src="currentUrl"
                             :poster="posterUrl || undefined" class="absolute inset-0 h-full w-full object-cover"
-                            :autoplay="isVisible" playsinline loop muted @loadeddata="onVideoLoad"
+                            :autoplay="isVisible" playsinline loop @loadeddata="onVideoLoad"
                             @play="handleVideoPlay" @pause="handleVideoPause">
                         </video>
 
@@ -66,11 +66,11 @@ import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue'
 const AUTOPLAY = true
 
 // OPTION A: Local/hosted file
-const localPath = new URL('../../assets/Images/Videos/HomeVideo.mp4', import.meta.url).href
+import localPath from '../assets/Videos/HomeVideo.mp4'
 // OPTION B: YouTube link example
 const youtubePath = 'https://youtu.be/HLemPV3M7IE'
 
-const src = ref(youtubePath) // Change to localPath to use local video
+const src = ref(localPath) // Change to localPath to use local video
 
 // Poster (used for local video + thumbnail fallback)
 // import heroPoster from '../assets/Images/AboutUs/AboutUs2x1.JPG'
@@ -94,7 +94,7 @@ const embedUrl = computed(() =>
 // Unified URL for local player
 const currentUrl = computed(() => (isYouTube.value ? '' : src.value))
 
-// Thumbnail (YT maxres, else poster)
+//Thumbnail (YT maxres, else poster)
 const thumbUrl = computed(() => {
     if (isYouTube.value && videoId.value) {
         return `https://i.ytimg.com/vi/${videoId.value}/maxresdefault.jpg`

@@ -1,8 +1,8 @@
 <script setup>
-const DIR = '../../assets/Images/Services/Website Design';
-const img1 = new URL(`${DIR}/1.png`, import.meta.url).href;
-const img2 = new URL(`${DIR}/2.png`, import.meta.url).href;
-const img3 = new URL(`${DIR}/3.png`, import.meta.url).href;
+import img1 from '../../assets/Images/Services/Website Design/1.png'
+import img2 from '../../assets/Images/Services/Website Design/2.png'
+import img3 from '../../assets/Images/Services/Website Design/3.png'
+
 </script>
 
 <template>
