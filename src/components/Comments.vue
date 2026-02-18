@@ -1,4 +1,3 @@
-<!-- src/components/Comments.vue -->
 <script setup>
 import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import { Icon } from '@iconify/vue'
@@ -6,11 +5,6 @@ import { Icon } from '@iconify/vue'
 const LOGO = (name) => new URL(`../assets/Logos/${name}.png`, import.meta.url).href
 const logoError = ref(false)
 
-/* ---------------------------
-   1) Local data (edit freely)
-   Put logo files in: src/assets/logos/
-   Use just the filename in each item (e.g., "acme.png")
---------------------------- */
 const comments = ref([
     {
         id: 1,
@@ -32,8 +26,7 @@ const comments = ref([
         comment: 'Loved the motion graphics and the brand system refresh. Highly recommended.',
         rating: 5,
         company: { name: 'Kreasi Motor', logo: LOGO('Kreasi Motor') }
-    }
-    ,
+    },
     {
         id: 4,
         customer_name: 'Alex T.',
@@ -60,24 +53,10 @@ const comments = ref([
         customer_name: 'Linda M.',
         comment: 'Creative concepts that truly resonate with our audience. The team was a pleasure to work with.',
         rating: 5,
-        company: { name: 'Mahasiswa', logo: "" }
+        company: { name: 'Mahasiswa', logo: '' }
     }
 ])
 
-/* Optional: auto-resolve logo URLs from /src/assets/logos/* */
-const logoFiles = import.meta.glob('./assets/logos/*.{png,svg,jpg,jpeg,webp}', {
-    eager: true, as: 'url'
-})
-function logoUrlByName(fileName) {
-    if (!fileName) return null
-    // Find a file that ends with /<fileName>
-    const entry = Object.entries(logoFiles).find(([p]) => p.endsWith('/' + fileName))
-    return entry ? entry[1] : null
-}
-
-/* ---------------------------
-   2) Carousel state & logic
---------------------------- */
 const wrapEl = ref(null)
 const viewportEl = ref(null)
 
@@ -97,18 +76,15 @@ watch([maxIndex, itemCount], () => {
     if (itemCount.value <= 0) currentIndex.value = 0
 })
 
-// Nav
 const scrollLeft = () => { if (currentIndex.value > 0) currentIndex.value-- }
 const scrollRight = () => { if (currentIndex.value < maxIndex.value) currentIndex.value++ }
 
-// Font scale
 const baseCard = 360
 const fontScale = computed(() => {
     const s = cardWidth.value / baseCard
     return Math.max(0.85, Math.min(1.05, s))
 })
 
-// Viewport metrics
 const getViewportMetrics = () => {
     const el = viewportEl.value
     if (!el) return { inner: 0, pl: 0, pr: 0 }
@@ -168,7 +144,6 @@ onUnmounted(() => {
     window.removeEventListener('keydown', onKeydown)
 })
 
-// Keyboard nav when in viewport
 function onKeydown(e) {
     if (!wrapEl.value) return
     const rect = wrapEl.value.getBoundingClientRect()
@@ -178,17 +153,17 @@ function onKeydown(e) {
     if (e.key === 'ArrowRight') scrollRight()
 }
 
-// Touch swipe
-let startX = 0, deltaX = 0
+let startX = 0
+let deltaX = 0
 const threshold = 40
 function onTouchStart(e) { startX = e.touches[0].clientX; deltaX = 0 }
 function onTouchMove(e) { deltaX = e.touches[0].clientX - startX }
 function onTouchEnd() {
     if (Math.abs(deltaX) > threshold) { deltaX < 0 ? scrollRight() : scrollLeft() }
-    startX = 0; deltaX = 0
+    startX = 0
+    deltaX = 0
 }
 
-// Ratings
 const clampInt = (n) => {
     const v = Number(n)
     if (!Number.isFinite(v)) return 0
@@ -199,7 +174,6 @@ const starsFor = (n) => {
     return Array.from({ length: 5 }, (_, i) => i < r)
 }
 
-// Trailing spacer
 const trailingSpacerPx = computed(() =>
     Math.max((visibleSlots.value - 1) * (cardWidth.value + gap.value) + spacerWidth, spacerWidth)
 )
@@ -216,7 +190,6 @@ const trailingSpacerPx = computed(() =>
 
                 <div v-else class="flex transition-transform duration-300 ease-in-out w-max"
                     :style="{ transform: `translateX(-${currentIndex * (cardWidth + gap)}px)`, gap: `${gap}px` }">
-                    <!-- Cards -->
                     <div v-for="(comment, index) in comments" :key="comment.id ?? index"
                         class="rounded-xl p-4 sm:p-6 text-white flex flex-col shadow-lg bg-middle-gradient relative overflow-y-visible"
                         :style="{
@@ -227,39 +200,34 @@ const trailingSpacerPx = computed(() =>
                             '--fs-body': `calc(${fontScale} * 0.875rem)`,
                             '--fs-meta': `calc(${fontScale} * 0.75rem)`
                         }">
-                        <!-- Header -->
                         <div class="flex items-center gap-3 sm:gap-4 mb-3 sm:mb-4 flex-shrink-0">
                             <div
                                 class="w-10 h-10 sm:w-12 sm:h-12 rounded-full overflow-hidden bg-white border-2 border-white/30 flex items-center justify-center">
-                                <!-- Logo image -->
                                 <img v-if="comment?.company?.logo && !logoError" :src="comment.company.logo"
                                     :alt="comment?.company?.name ? `${comment.company.name} logo` : 'Company logo'"
                                     class="w-full h-full object-cover" loading="lazy" @error="logoError = true" />
 
-                                <!-- Iconify fallback -->
-                                <Icon v-else icon="mdi:account-circle" 
+                                <Icon v-else icon="mdi:account-circle"
                                     class="w-8 h-8 sm:w-9 sm:h-9 text-darkPurple"
                                     aria-hidden="true"
-                                    />
+                                />
                             </div>
                             <div class="flex-1 min-w-0">
                                 <h3 class="font-bold mb-1 truncate" :style="{ fontSize: 'var(--fs-title)' }">
                                     {{ comment?.customer_name || 'Anonymous' }}
                                 </h3>
                                 <p class="opacity-80 truncate" :style="{ fontSize: 'var(--fs-meta)' }">
-                                    {{ comment?.company?.name || '—' }}
+                                    {{ comment?.company?.name || '-' }}
                                 </p>
                             </div>
                         </div>
 
-                        <!-- Body -->
                         <div class="flex-1">
                             <p class="leading-relaxed opacity-95 line-clamp-4" :style="{ fontSize: 'var(--fs-body)' }">
                                 {{ comment?.comment || '' }}
                             </p>
                         </div>
 
-                        <!-- Rating -->
                         <div class="absolute bottom-0 left-1/4 -translate-x-1/2 translate-y-1/2 bg-white rounded-full px-3 sm:px-4 py-0.5 sm:py-1 shadow-md flex items-center gap-1 border border-gray-200 z-10"
                             :aria-label="`Rating ${clampInt(comment?.rating)} out of 5`">
                             <svg v-for="(filled, i) in starsFor(comment?.rating)" :key="i"
@@ -272,12 +240,10 @@ const trailingSpacerPx = computed(() =>
                         </div>
                     </div>
 
-                    <!-- Trailing spacer -->
                     <div :style="{ flex: `0 0 ${trailingSpacerPx}px` }"></div>
                 </div>
             </div>
 
-            <!-- Arrows -->
             <button v-if="itemCount > 1" class="absolute -left-3 sm:-left-3 md:-left-4 lg:-left-6 top-1/2 -translate-y-1/2
                h-9 w-9 md:h-12 md:w-12 rounded-full bg-white/90 text-purple-500
                flex items-center justify-center shadow-lg ring-1 ring-black/10

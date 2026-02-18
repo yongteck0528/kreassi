@@ -1,10 +1,7 @@
 <template>
     <section id="founder" class="bg-white">
         <div class="max-w-screen-xl mx-auto px-8 sm:px-10 lg:px-8 py-12 sm:py-16 lg:py-20">
-            <!-- exactly 2 columns from md+ -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-10 lg:gap-12 md:items-center">
-
-                <!-- LEFT: Ken — same proportions, smaller again -->
                 <div class="justify-self-center">
                     <div class="relative mx-auto md:mx-0
            w-[160px] sm:w-[220px] md:w-[260px] lg:w-[300px] xl:w-[340px]" style="aspect-ratio: 330 / 646;">
@@ -12,13 +9,12 @@
                             class="absolute inset-x-0 bottom-0 h-[75%] rounded-3xl bg-middle-gradient ring-1 ring-black/10 shadow-xl z-0">
                         </div>
 
-                        <img src="../assets/Images/AboutUs/ken.png" alt="Ken — Founder of Kreassi"
+                        <img src="../assets/Images/AboutUs/ken.png" alt="Ken &mdash; Founder of Kreassi"
                             class="relative z-10 block w-full h-auto object-contain select-none pointer-events-none"
                             loading="lazy" decoding="async" />
                     </div>
                 </div>
 
-                <!-- RIGHT: Title + copy -->
                 <div class="items-start">
                     <h2 class="text-darkPurple font-extrabold leading-tight text-3xl sm:text-4xl lg:text-[44px]">
                         MEET OUR FOUNDER, KEN
@@ -34,17 +30,17 @@
                         </p>
                         <p>
                             Believing that great leadership empowers others to lead, Ken shaped Kreassi Team
-                            into more than just a service provider — it’s a partner in brand building. Under his
+                            into more than just a service provider &mdash; it&rsquo;s a partner in brand building. Under his
                             guidance, Kreassi Team has supported over <strong>50+</strong> businesses across
                             Indonesia, delivering impactful digital solutions with speed and purpose.
                         </p>
                         <p>
-                            In 2025, Ken began expanding internationally — starting with
-                            <strong> Sydney, Australia</strong> — opening new opportunities to serve global brands
+                            In 2025, Ken began expanding internationally &mdash; starting with
+                            <strong> Sydney, Australia</strong> &mdash; opening new opportunities to serve global brands
                             with the same structured creativity and fast-paced execution.
                         </p>
                         <p>
-                            “I don’t just build projects — I build people. That’s where real transformation happens.”
+                            &ldquo;I don&rsquo;t just build projects &mdash; I build people. That&rsquo;s where real transformation happens.&rdquo;
                         </p>
                         <p class="font-bold text-darkPurple">
                             Today, Kreassi Team continues to evolve, offering scalable creative services while

@@ -1,6 +1,6 @@
 <template>
     <!-- Center vertically & horizontally -->
-    <section class="w-full min-h-[100svh] flex flex-col items-center justify-center px-4">
+    <section class="w-full min-h-[75svh] md:min-h-[100svh] flex flex-col items-center justify-center px-4">
         <!-- Heading -->
         <h2 class="text-3xl sm:text-4xl md:text-[48px] font-bold text-center text-darkPurple">
             COLLABORATION STEPS

@@ -13,13 +13,23 @@ const visibleClass = (i) => {
     if (i === 1) return 'hidden md:block'   // #2: tablet+ only
     return ''                               // #1 and #4: always
 }
+
+const itemClass = 'relative h-full min-h-0 flex items-end justify-center overflow-visible'
+const imageClass = [
+    'pointer-events-none select-none object-contain object-bottom',
+    'h-[86%] md:h-[90%] lg:h-[94%]',
+    'w-[120%] md:w-[118%] lg:w-[115%] max-w-none',
+    // Push the image slightly below the visible canvas so hands feel anchored.
+    'translate-y-[7%] md:translate-y-[9%] lg:translate-y-[11%]',
+].join(' ')
 </script>
 
 <template>
-    <!-- 2 cols mobile, 3 cols tablet, 4 cols desktop; align to bottom -->
-    <div class="h-full grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 place-items-end">
-        <img v-for="(src, i) in imgs" :key="i" :src="src" alt=""
-            class="max-h-full max-w-full object-contain pointer-events-none select-none" :class="visibleClass(i)"
-            loading="lazy" decoding="async" />
+    <div class="h-full w-full px-2 md:px-4 lg:px-6 overflow-hidden">
+        <div class="h-full w-full grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-0 md:gap-2 lg:gap-4 items-end">
+            <div v-for="(src, i) in imgs" :key="i" :class="[itemClass, visibleClass(i)]">
+                <img :src="src" alt="" :class="imageClass" loading="lazy" decoding="async" />
+            </div>
+        </div>
     </div>
 </template>

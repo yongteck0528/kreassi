@@ -67,8 +67,6 @@ const AUTOPLAY = true
 
 // OPTION A: Local/hosted file
 import localPath from '../assets/Videos/HomeVideo.mp4'
-// OPTION B: YouTube link example
-const youtubePath = 'https://youtu.be/HLemPV3M7IE'
 
 const src = ref(localPath) // Change to localPath to use local video
 

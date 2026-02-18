@@ -1,10 +1,9 @@
 <script setup>
-import { ref, computed, defineAsyncComponent, nextTick, h, watch } from 'vue'
+import { ref, computed, defineAsyncComponent, nextTick, h } from 'vue'
 import SlideBase from './Services/SlideBase.vue'
 
 const BG_URL = new URL('../assets/Backgrounds/3.jpeg', import.meta.url).href
 
-/* Buttons */
 const btnBase =
     "relative shrink-0 lg:shrink w-auto lg:w-full rounded-full px-4 py-2.5 lg:py-3 " +
     "text-[clamp(12px,2.4vw,15px)] lg:text-[15px] font-medium tracking-tight " +
@@ -22,8 +21,7 @@ const btnActive =
     "before:bg-[radial-gradient(120%_180%_at_10%_-20%,rgba(183,110,250,.25),rgba(255,255,255,0))] " +
     "hover:before:opacity-100"
 
-/* Async loaders */
-const LoadingView = { template: `<div class="h-full grid place-items-center text-white/80 text-sm md:text-base">Loading…</div>` }
+const LoadingView = { template: `<div class="h-full grid place-items-center text-white/80 text-sm md:text-base">Loading...</div>` }
 const ErrorView = {
     props: { error: Object },
     template: `<div class="h-full grid place-items-center text-red-300 text-sm md:text-base px-4 text-center">
@@ -51,7 +49,6 @@ const ErrorBoundary = {
 }
 const load = (fn) => defineAsyncComponent({ loader: fn, loadingComponent: LoadingView, errorComponent: ErrorView, delay: 150, timeout: 30000 })
 
-/* Slides map */
 const componentsMap = {
     SlideSocialMedia: load(() => import('./Services/SlideSocialMedia.vue')),
     SlideContentCreation: load(() => import('./Services/SlideContentCreation.vue')),
@@ -65,7 +62,6 @@ const componentsMap = {
     SlideWebsiteDesign: load(() => import('./Services/SlideWebsiteDesign.vue')),
 }
 
-/* Tabs */
 const tabs = [
     { key: 'social', label: 'Social Media', comp: 'SlideSocialMedia', title: 'Social Media Management', subtitle: 'Grow your brand on social platforms' },
     { key: 'content', label: 'Content Creation', comp: 'SlideContentCreation', title: 'Content Creation', subtitle: 'Engaging content tailored for you' },
@@ -83,7 +79,6 @@ const activeIndex = ref(0)
 const activeTab = computed(() => tabs[activeIndex.value])
 const ActiveComponent = computed(() => componentsMap[activeTab.value.comp])
 
-/* Mobile scroll-to-selected */
 const navTrack = ref(null)
 function setActive(index) {
     if (index === activeIndex.value) return
@@ -102,19 +97,15 @@ function setActive(index) {
 </script>
 
 <template>
-    <!-- Height locks per breakpoint -->
     <section class="relative w-full max-w-full isolate overflow-x-hidden
            h-[408px] md:h-[598.03px] lg:h-screen" aria-label="Services">
-        <!-- Background -->
         <div class="absolute inset-0 -z-10">
             <img :src="BG_URL" alt=""
                 class="h-full w-full object-cover object-center select-none pointer-events-none" />
             <div class="absolute inset-0 bg-black/25"></div>
         </div>
 
-        <!-- Layout: nav + slide; no width bleed -->
         <div class="grid h-full grid-rows-[auto,1fr] min-w-0 max-w-full">
-            <!-- NAV -->
             <nav class="w-full py-4 min-w-0" role="tablist" aria-label="Service tabs">
                 <div class="w-full min-w-0 px-3 sm:px-6 md:px-8 pt-3">
                     <div ref="navTrack" class="min-w-0 flex flex-nowrap overflow-x-auto no-scrollbar scroll-px-4 gap-2
@@ -128,7 +119,6 @@ function setActive(index) {
                 </div>
             </nav>
 
-            <!-- Slide area fills the locked height -->
             <div class="min-h-0 h-full pt-4 md:pt-6 px-0 min-w-0 max-w-full">
                 <ErrorBoundary>
                     <Suspense>
@@ -141,7 +131,7 @@ function setActive(index) {
                             </transition>
                         </template>
                         <template #fallback>
-                            <div class="h-full grid place-items-center text-white/80 text-sm md:text-base">Loading…
+                            <div class="h-full grid place-items-center text-white/80 text-sm md:text-base">Loading...
                             </div>
                         </template>
                     </Suspense>

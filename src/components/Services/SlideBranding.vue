@@ -1,23 +1,23 @@
 <script setup>
-const DIR = '../../assets/Images/Services/Branding';
 import img1 from '../../assets/Images/Services/Branding/1.png'
 import img2 from '../../assets/Images/Services/Branding/2.png'
 import img3 from '../../assets/Images/Services/Branding/3.png'
 </script>
 
 <template>
-    <div class="flex items-center justify-center mt-2">
-        <div class="grid grid-cols-2 gap-4 md:gap-2 w-full p-4 sm:p-6 max-w-md sm:max-w-lg md:max-w-2xl">
-            <!-- Left Column -->
-            <div class="flex flex-col gap-4">
-                <img :src="img1" alt="Image 1" class="rounded-lg object-cover w-full h-full md:h-40 sm:h-32" />
-                <img :src="img2" alt="Image 2" class="rounded-lg object-cover w-full h-full md:h-40 sm:h-32" />
+    <div class="h-full w-full min-h-0 overflow-hidden px-3 sm:px-4 md:px-6 pt-6 md:pt-8">
+        <div class="mx-auto h-full max-w-[min(92vw,44rem)] min-h-0 grid grid-cols-2 grid-rows-2 gap-0 scale-75 origin-top">
+            <div class="relative min-h-0">
+                <img :src="img1" alt="Image 1" class="absolute inset-0 h-full w-full rounded-lg object-cover" />
             </div>
 
-            <!-- Right Column -->
-            <img :src="img3" alt="Image 3" class="rounded-lg object-cover w-full h-full" />
+            <div class="relative row-span-2 min-h-0">
+                <img :src="img3" alt="Image 3" class="absolute inset-0 h-full w-full rounded-lg object-cover" />
+            </div>
+
+            <div class="relative min-h-0">
+                <img :src="img2" alt="Image 2" class="absolute inset-0 h-full w-full rounded-lg object-cover" />
+            </div>
         </div>
     </div>
 </template>
-
-<style scoped></style>

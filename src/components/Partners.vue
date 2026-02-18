@@ -1,7 +1,7 @@
 <template>
-    <section class="w-full mx-auto px-6 py-16 lg:p-16 grid gap-4 md:grid-cols-10 lg:grid-cols-10 items-center bg-var-8 bg-full">
+    <section class="w-full mx-auto px-6 py-8 lg:p-16 grid gap-4 md:grid-cols-10 lg:grid-cols-10 items-center bg-var-8 bg-full">
         <!-- Left text -->
-        <div class="text-center leading-tight px-8 md:col-span-4 lg:text-left md:text-left">
+        <div class="text-center leading-tight px-8 pb-5 md:pb-0 md:col-span-4 lg:text-left md:text-left lg:pb-4">
             <h1 class="font-uppercase-title mb-0 text-2xl sm:text-3xl md:text-5xl text-[#371055] font-normal">WORKING
             </h1>
             <h1 class="font-uppercase-title mb-0 text-2xl sm:text-3xl md:text-5xl text-[#371055] font-normal">
