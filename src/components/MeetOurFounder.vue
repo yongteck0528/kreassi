@@ -1,6 +1,6 @@
 <template>
     <section id="founder" class="bg-white">
-        <div class="max-w-screen-xl mx-auto px-8 sm:px-10 lg:px-8 py-12 sm:py-16 lg:py-20">
+        <div class="max-w-screen-xl mx-auto px-8 sm:px-10 lg:px-8 pt-4 sm:pt-8 lg:pt-10 pb-12 sm:pb-16 lg:pb-20">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-10 lg:gap-12 md:items-center">
                 <div class="justify-self-center">
                     <div class="relative mx-auto md:mx-0
@@ -53,3 +53,4 @@
         </div>
     </section>
 </template>
+

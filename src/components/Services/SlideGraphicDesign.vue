@@ -13,7 +13,7 @@ const imgs = Object.keys(modules)
 </script>
 
 <template>
-  <div class="grid grid-cols-1 md:grid-cols-8 lg:gap-0 gap-4 px-4 md:px-10 lg:px-20 mt-5">
+  <div class="grid grid-cols-1 md:grid-cols-8 gap-4 px-4 md:px-10 lg:px-20 mt-5">
     <!-- Left side (only visible on md and above) -->
     <div class="hidden md:flex md:col-span-3 flex-col">
       <img :src="imgs[10]" alt="Image 12" class="object-contain w-full h-24 lg:h-32" />
@@ -22,7 +22,7 @@ const imgs = Object.keys(modules)
     </div>
 
     <!-- Right side -->
-    <div class="col-span-5 grid grid-cols-5 gap-3">
+    <div class="col-span-5 grid grid-cols-5 gap-0">
       <img v-for="(img, i) in imgs.slice(0, 10)" :key="i" :src="img" :alt="`Image ${i + 1}`"
         class="object-contain w-full lg:h-full h-full" />
     </div>

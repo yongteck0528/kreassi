@@ -108,14 +108,14 @@ const recalc = () => {
             const totalGap = gap.value * Math.floor(visibleSlots.value)
             cardWidth.value = Math.floor((inner - totalGap) / visibleSlots.value)
             cardWidth.value = Math.max(Math.min(cardWidth.value, 420), 280)
-            cardHeight.value = 220
+            cardHeight.value = 200
         } else if (inner < 768) {
             visibleSlots.value = 1.6
             gap.value = 16
             const totalGap = gap.value * Math.floor(visibleSlots.value)
             cardWidth.value = Math.floor((inner - totalGap) / visibleSlots.value)
             cardWidth.value = Math.max(Math.min(cardWidth.value, 480), 300)
-            cardHeight.value = 250
+            cardHeight.value = 230
         } else {
             visibleSlots.value = 3
             gap.value = 20

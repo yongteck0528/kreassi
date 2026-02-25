@@ -30,14 +30,14 @@
                 <img :src="paperBg" alt="" class="block w-full h-auto" />
                 <figcaption class="absolute inset-0 flex items-center justify-center px-4">
                     <p class="font-bold text-darkPurple text-center leading-tight
-              text-[15px] sm:text-[18px] md:text-[28px] lg:text-[34px] xl:text-[38px]">
+              text-[16px] sm:text-[18px] md:text-[28px] lg:text-[36px] xl:text-[46px]">
                         &ldquo;We don&rsquo;t just work for you &mdash; we work with you.&rdquo;
                     </p>
                 </figcaption>
             </figure>
         </div>
 
-        <div class="bg-white">
+        <div>
             <div class="pt-16 sm:pt-20 lg:pt-24"></div>
         </div>
     </section>

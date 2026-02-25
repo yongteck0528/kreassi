@@ -10,9 +10,9 @@ defineProps({
 <template>
   <div class="h-full w-full grid grid-cols-3
            gap-x-2 sm:gap-x-3 md:gap-x-4 gap-y-6
-           justify-items-center px-2 sm:px-4 md:px-6 items-center">
-    <div v-for="(src, i) in videos" :key="i" class="w-fit h-fit shrink-0 group">
-      <div class="overflow-visible transform-gpu scale-[0.5] sm:scale-100">
+           justify-items-center px-2 sm:px-4 md:px-6 items-center ">
+    <div v-for="(src, i) in videos" :key="i" class="w-fit h-fit shrink-0 group -mt-4">
+      <div class="overflow-visible transform-gpu scale-[0.62] sm:scale-100">
         <div class="relative rounded-[30px] p-[2px]
                  bg-[conic-gradient(from_140deg_at_30%_10%,#ffffff_0%,#C7B8FF_12%,#7C3DB0_30%,#B76EFA_55%,#DBD6FF_75%,#ffffff_100%)]
                  shadow-[0_18px_35px_-10px_rgba(0,0,0,.45),0_8px_18px_-8px_rgba(0,0,0,.3)]
@@ -35,9 +35,9 @@ defineProps({
 
               <div class="p-1 sm:p-1.5">
                 <div class="aspect-[9/16]
-                         h-[clamp(150px,35svh,240px)]
-                         md:h-[clamp(170px,38svh,260px)]
-                         lg:h-[clamp(190px,40svh,280px)]
+                         h-[clamp(170px,38svh,270px)]
+                         md:h-[clamp(195px,42svh,300px)]
+                         lg:h-[clamp(220px,46svh,330px)]
                          rounded-[18px] overflow-hidden">
                   <video :src="src" class="h-full w-full object-cover" playsinline autoplay muted loop
                     preload="metadata">

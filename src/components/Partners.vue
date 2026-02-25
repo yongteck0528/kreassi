@@ -33,12 +33,62 @@
 // case-sensitive and relative to this file:
 const files = import.meta.glob('../assets/Logos/*.png', { eager: true, as: 'url' })
 
+// Manual order by logo base filename (without extension).
+// Unlisted logos are appended in alphabetical order.
+const preferredOrder = [
+    '2 Points Coffee', 
+    'Ada Jahit', 
+    'Ayam Bebek Pak Boss', 
+    'Ayam Senang', 
+    'Bakso Cuanki Kang Gelo', 
+    'BARA RAMEN', 
+    'Bells', 
+    'Bubur Ayam Rinjani', 
+    'Bumboe RiceBox', 
+    'Buzz Cafe', 
+    'CV Buanna Energi Lokastara', 
+    'Elements Reflexology', 
+    'Glow Billiard', 
+    'Hotel Q', 
+    'Incredibowl', 
+    'JAM', 
+    'JMJ', 
+    'Koto Curry House', 
+    'Kreasi Motor', 
+    'Maison By Model', 
+    'Nasi Goreng Bistik Parama', 
+    'Natrindo USrya Prima', 
+    'Otopia Coating & Detailing', 
+    'Pesona Pack', 
+    'Qubu Resort', 
+    'RND Motor', 
+    'Sosmed Cafe', 
+    'TechLab', 
+    'UdaOlshop', 
+    'UP 2 U Food & Life Junction', 
+    'Xiang Wei'
+]
+
+const normalize = (value) => value.trim().replace(/\s+/g, ' ')
+const collator = new Intl.Collator('en', { sensitivity: 'base' })
+const orderRank = new Map(preferredOrder.map((name, index) => [normalize(name), index]))
+
 const logos = Object.entries(files)
     .map(([path, url]) => {
         const filename = (path.split('/').pop() || '').trim()
-        const base = filename.replace(/\.[^.]+$/, '').trim()
-        const alt = base.replace(/\s+/g, ' ').replace(/[-_]+/g, ' ').replace(/\b\w/g, c => c.toUpperCase())
-        return { url, alt }
+        const base = normalize(filename.replace(/\.[^.]+$/, ''))
+        const alt = base.replace(/[-_]+/g, ' ').replace(/\b\w/g, c => c.toUpperCase())
+        return { url, alt, sortKey: base }
     })
-    .sort((a, b) => a.alt.localeCompare(b.alt))
+    .sort((a, b) => {
+        const aRank = orderRank.get(a.sortKey)
+        const bRank = orderRank.get(b.sortKey)
+        const aHasRank = aRank !== undefined
+        const bHasRank = bRank !== undefined
+
+        if (aHasRank && bHasRank) return aRank - bRank
+        if (aHasRank) return -1
+        if (bHasRank) return 1
+        return collator.compare(a.sortKey, b.sortKey)
+    })
 </script>
