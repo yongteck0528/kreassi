@@ -1,7 +1,9 @@
 <script setup>
-import { ref, computed, defineAsyncComponent, nextTick, h } from 'vue'
+import { ref, computed, defineAsyncComponent, defineComponent, nextTick, onErrorCaptured, h } from 'vue'
+import { useI18n } from 'vue-i18n'
 import SlideBase from './Services/SlideBase.vue'
 
+const { t, tm } = useI18n()
 const BG_URL = new URL('../assets/Backgrounds/3.jpeg', import.meta.url).href
 
 const btnBase =
@@ -21,32 +23,50 @@ const btnActive =
     "before:bg-[radial-gradient(120%_180%_at_10%_-20%,rgba(183,110,250,.25),rgba(255,255,255,0))] " +
     "hover:before:opacity-100"
 
-const LoadingView = { template: `<div class="h-full grid place-items-center text-white/80 text-sm md:text-base">Loading...</div>` }
-const ErrorView = {
-    props: { error: Object },
-    template: `<div class="h-full grid place-items-center text-red-300 text-sm md:text-base px-4 text-center">
-    <div>
-      <p class="font-semibold">Failed to load slide.</p>
-      <p class="opacity-80 mt-1">Check file path / name & rebuild.</p>
-      <pre class="opacity-60 mt-2 text-xs" v-if="error">{{ error.message }}</pre>
-    </div>
-  </div>`
-}
-const ErrorBoundary = {
+const LoadingView = defineComponent({
+    name: 'ServicesLoadingView',
+    setup() {
+        const { t } = useI18n()
+        return () => h('div', { class: 'h-full grid place-items-center text-white/80 text-sm md:text-base' }, t('services.loading'))
+    },
+})
+const ErrorView = defineComponent({
+    name: 'ServicesErrorView',
+    props: { error: { type: Object, default: null } },
+    setup(props) {
+        const { t } = useI18n()
+        return () =>
+            h('div', { class: 'h-full grid place-items-center text-red-300 text-sm md:text-base px-4 text-center' }, [
+                h('div', [
+                    h('p', { class: 'font-semibold' }, t('services.errorTitle')),
+                    h('p', { class: 'opacity-80 mt-1' }, t('services.errorHint')),
+                    props.error?.message ? h('pre', { class: 'opacity-60 mt-2 text-xs' }, props.error.message) : null,
+                ]),
+            ])
+    },
+})
+const ErrorBoundary = defineComponent({
     name: 'ErrorBoundary',
-    data: () => ({ err: null }),
-    errorCaptured(err) { this.err = err; return false },
-    render() {
-        if (this.err) {
-            return h('div', { class: 'h-full grid place-items-center text-red-300 text-sm md:text-base px-4 text-center' },
-                [h('div', [
-                    h('p', { class: 'font-semibold' }, 'This slide crashed while rendering.'),
-                    h('p', { class: 'opacity-80 mt-1' }, 'Open the console for details.')
-                ])])
+    setup(_, { slots }) {
+        const err = ref(null)
+        const { t } = useI18n()
+        onErrorCaptured((error) => {
+            err.value = error
+            return false
+        })
+        return () => {
+            if (err.value) {
+                return h('div', { class: 'h-full grid place-items-center text-red-300 text-sm md:text-base px-4 text-center' }, [
+                    h('div', [
+                        h('p', { class: 'font-semibold' }, t('services.crashedTitle')),
+                        h('p', { class: 'opacity-80 mt-1' }, t('services.crashedHint')),
+                    ]),
+                ])
+            }
+            return slots.default?.()
         }
-        return this.$slots.default?.()
-    }
-}
+    },
+})
 const load = (fn) => defineAsyncComponent({ loader: fn, loadingComponent: LoadingView, errorComponent: ErrorView, delay: 150, timeout: 30000 })
 
 const componentsMap = {
@@ -62,21 +82,24 @@ const componentsMap = {
     SlideWebsiteDesign: load(() => import('./Services/SlideWebsiteDesign.vue')),
 }
 
-const tabs = [
-    { key: 'social', label: 'Social Media', comp: 'SlideSocialMedia', title: 'Social Media Management', subtitle: 'Grow your brand on social platforms' },
-    { key: 'content', label: 'Content Creation', comp: 'SlideContentCreation', title: 'Content Creation', subtitle: 'Engaging content tailored for you' },
-    { key: 'campaign', label: 'Marketing Campaign', comp: 'SlideMarketingCampaign', title: 'Marketing Campaign', subtitle: 'Strategic campaigns that convert' },
-    { key: 'branding', label: 'Branding', comp: 'SlideBranding', title: 'Branding', subtitle: 'Build a strong brand identity' },
-    { key: 'photo', label: 'Photography', comp: 'SlidePhotography', title: 'Photography', subtitle: 'Capture moments professionally' },
-    { key: 'video', label: 'Videography', comp: 'SlideVideography', title: 'Videography', subtitle: 'Visual storytelling through video' },
-    { key: 'graphic', label: 'Graphic Design', comp: 'SlideGraphicDesign', title: 'Graphic Design', subtitle: 'Creative designs that stand out' },
-    { key: 'motion', label: 'Motion Graphic', comp: 'SlideMotionGraphic', title: 'Motion Graphic', subtitle: 'Dynamic animations and visuals' },
-    { key: 'logo', label: 'Logo Design', comp: 'SlideLogoDesign', title: 'Logo Design', subtitle: 'Unique logos for your brand' },
-    { key: 'web', label: 'Website Design', comp: 'SlideWebsiteDesign', title: 'Website Design', subtitle: 'Modern and responsive websites' },
-]
+const tabComponentByKey = {
+    social: 'SlideSocialMedia',
+    content: 'SlideContentCreation',
+    campaign: 'SlideMarketingCampaign',
+    branding: 'SlideBranding',
+    photo: 'SlidePhotography',
+    video: 'SlideVideography',
+    graphic: 'SlideGraphicDesign',
+    motion: 'SlideMotionGraphic',
+    logo: 'SlideLogoDesign',
+    web: 'SlideWebsiteDesign',
+}
+const tabs = computed(() =>
+    tm('services.tabs').map((tab) => ({ ...tab, comp: tabComponentByKey[tab.key] }))
+)
 
 const activeIndex = ref(0)
-const activeTab = computed(() => tabs[activeIndex.value])
+const activeTab = computed(() => tabs.value[activeIndex.value])
 const ActiveComponent = computed(() => componentsMap[activeTab.value.comp])
 
 const navTrack = ref(null)
@@ -98,7 +121,7 @@ function setActive(index) {
 
 <template>
     <section class="relative w-full max-w-full isolate overflow-x-hidden
-           h-[408px] md:h-[598.03px] lg:h-screen" aria-label="Services">
+           h-[408px] md:h-[598.03px] lg:h-screen" :aria-label="t('services.ariaLabel')">
         <div class="absolute inset-0 -z-10">
             <img :src="BG_URL" alt=""
                 class="h-full w-full object-cover object-center select-none pointer-events-none" />
@@ -106,7 +129,7 @@ function setActive(index) {
         </div>
 
         <div class="grid h-full grid-rows-[auto,1fr] min-w-0 max-w-full">
-            <nav class="w-full py-4 min-w-0" role="tablist" aria-label="Service tabs">
+            <nav class="w-full py-4 min-w-0" role="tablist" :aria-label="t('services.tabsAriaLabel')">
                 <div class="w-full min-w-0 px-3 sm:px-6 md:px-8 pt-3">
                     <div ref="navTrack" class="min-w-0 flex flex-nowrap overflow-x-auto no-scrollbar scroll-px-4 gap-2
                    lg:grid lg:grid-cols-5 lg:gap-3 lg:overflow-visible">
@@ -131,7 +154,7 @@ function setActive(index) {
                             </transition>
                         </template>
                         <template #fallback>
-                            <div class="h-full grid place-items-center text-white/80 text-sm md:text-base">Loading...
+                            <div class="h-full grid place-items-center text-white/80 text-sm md:text-base">{{ t('services.loading') }}
                             </div>
                         </template>
                     </Suspense>

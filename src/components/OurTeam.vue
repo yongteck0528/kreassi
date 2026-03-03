@@ -2,18 +2,17 @@
     <section class="relative overflow-x-clip overflow-y-visible">
         <div class="relative bg-cover bg-center bg-var-3">
             <div class="max-w-screen-xl mx-auto px-6 sm:px-10 lg:px-20 pt-12 sm:pt-12 lg:pt-20 text-center">
-                <h2 class="text-white font-bold tracking-wide text-3xl sm:text-4xl lg:text-5xl">OUR TEAM</h2>
+                <h2 class="text-white font-bold tracking-wide text-3xl sm:text-4xl lg:text-5xl">{{ t('ourTeam.title') }}</h2>
                 <p class="text-white/90 mt-2 uppercase tracking-widest text-sm sm:text-base lg:text-lg">
-                    A TEAM THAT FEELS LIKE YOURS
+                    {{ t('ourTeam.subtitle') }}
                 </p>
                 <p class="text-white/90 mt-4 max-w-2xl mx-auto text-xs sm:text-sm lg:text-base leading-relaxed">
-                    Behind Kreassi Team is a group of passionate creatives &mdash; designers, editors, strategists, and
-                    marketers &mdash; who thrive on teamwork, trends, and turning visions into visuals.
+                    {{ t('ourTeam.description') }}
                 </p>
             </div>
 
             <div class="mt-6 sm:mt-8 lg:mt-10">
-                <img :src="teamImg" alt="Kreassi Team group" class="block mx-auto w-full h-auto max-w-[min(96vw,1366px)]
+                <img :src="teamImg" :alt="t('ourTeam.imageAlt')" class="block mx-auto w-full h-auto max-w-[min(96vw,1366px)]
                  drop-shadow-[0_30px_60px_rgba(0,0,0,.35)]" loading="lazy" decoding="async" />
             </div>
 
@@ -31,7 +30,7 @@
                 <figcaption class="absolute inset-0 flex items-center justify-center px-4">
                     <p class="font-bold text-darkPurple text-center leading-tight
               text-[16px] sm:text-[18px] md:text-[28px] lg:text-[36px] xl:text-[46px]">
-                        &ldquo;We don&rsquo;t just work for you &mdash; we work with you.&rdquo;
+                        {{ t('ourTeam.quote') }}
                     </p>
                 </figcaption>
             </figure>
@@ -44,6 +43,9 @@
 </template>
 
 <script setup>
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 const teamImg = new URL('../assets/Images/AboutUs/ourteam.png', import.meta.url).href
 const paperBg = new URL('../assets/Backgrounds/paperbg.png', import.meta.url).href
 </script>

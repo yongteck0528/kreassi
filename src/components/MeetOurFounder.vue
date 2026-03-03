@@ -1,6 +1,12 @@
+<script setup>
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
+</script>
+
 <template>
     <section id="founder" class="bg-white">
-        <div class="max-w-screen-xl mx-auto px-8 sm:px-10 lg:px-8 pt-4 sm:pt-8 lg:pt-10 pb-12 sm:pb-16 lg:pb-20">
+        <div class="max-w-screen-xl mx-auto px-8 sm:px-10 lg:px-8 pt-10 sm:pt-12 lg:pt-[140px] pb-12 sm:pb-16 lg:pb-20">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-10 lg:gap-12 md:items-center">
                 <div class="justify-self-center">
                     <div class="relative mx-auto md:mx-0
@@ -9,7 +15,7 @@
                             class="absolute inset-x-0 bottom-0 h-[75%] rounded-3xl bg-middle-gradient ring-1 ring-black/10 shadow-xl z-0">
                         </div>
 
-                        <img src="../assets/Images/AboutUs/ken.png" alt="Ken &mdash; Founder of Kreassi"
+                        <img src="../assets/Images/AboutUs/ken.png" :alt="t('founder.imageAlt')"
                             class="relative z-10 block w-full h-auto object-contain select-none pointer-events-none"
                             loading="lazy" decoding="async" />
                     </div>
@@ -17,34 +23,25 @@
 
                 <div class="items-start">
                     <h2 class="text-darkPurple font-extrabold leading-tight text-3xl sm:text-4xl lg:text-[44px]">
-                        MEET OUR FOUNDER, KEN
+                        {{ t('founder.title') }}
                     </h2>
 
                     <div class="mt-6 space-y-5 text-darkPurple/90 text-sm sm:text-sm md:text-xs lg:text-base xl:text-lg
               leading-relaxed md:leading-normal lg:leading-relaxed">
                         <p>
-                            Founded by Ken in 2021, Kreassi Team was born from a mission to help brands grow
-                            with clarity, creativity, and structure. With a background in creative strategy and a
-                            transformational leadership approach, Ken has built an agency where collaboration,
-                            trust, and growth are at the core.
+                            {{ t('founder.p1') }}
                         </p>
                         <p>
-                            Believing that great leadership empowers others to lead, Ken shaped Kreassi Team
-                            into more than just a service provider &mdash; it&rsquo;s a partner in brand building. Under his
-                            guidance, Kreassi Team has supported over <strong>50+</strong> businesses across
-                            Indonesia, delivering impactful digital solutions with speed and purpose.
+                            {{ t('founder.p2') }}
                         </p>
                         <p>
-                            In 2025, Ken began expanding internationally &mdash; starting with
-                            <strong> Sydney, Australia</strong> &mdash; opening new opportunities to serve global brands
-                            with the same structured creativity and fast-paced execution.
+                            {{ t('founder.p3') }}
                         </p>
                         <p>
-                            &ldquo;I don&rsquo;t just build projects &mdash; I build people. That&rsquo;s where real transformation happens.&rdquo;
+                            {{ t('founder.quote') }}
                         </p>
                         <p class="font-bold text-darkPurple">
-                            Today, Kreassi Team continues to evolve, offering scalable creative services while
-                            staying deeply human, collaborative, and driven by strategy.
+                            {{ t('founder.p5') }}
                         </p>
                     </div>
                 </div>
@@ -53,4 +50,3 @@
         </div>
     </section>
 </template>
-

@@ -11,7 +11,7 @@ const comments = ref([
         customer_name: 'Jane Doe',
         comment: 'Clear value and smooth delivery. Our KPIs improved within the first month.',
         rating: 5,
-        company: { name: 'Bakso Chuanki Kang Gelo', logo: LOGO('Bakso Cuanki Kang Gelo ') }
+        company: { name: 'Bakso Chuanki Kang Gelo ', logo: LOGO('Bakso Cuanki Kang Gelo ') }
     },
     {
         id: 2,

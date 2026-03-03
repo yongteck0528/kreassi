@@ -12,7 +12,7 @@
                         <iframe v-if="isPlaying && isYouTube" :src="embedUrl"
                             class="absolute inset-0 h-full w-full rounded-lg" frameborder="0"
                             allow="autoplay; encrypted-media; gyroscope; picture-in-picture" @load="onVideoLoad"
-                            title="Hero video">
+                            :title="t('hero.videoTitle')">
                         </iframe>
 
                         <!-- Active player (local file/url) -->
@@ -24,7 +24,7 @@
 
                         <!-- Thumbnail / Play surface (shown when not playing) -->
                         <button v-if="!isPlaying" type="button" class="absolute inset-0 group cursor-pointer"
-                            @click="play" aria-label="Play featured video">
+                            @click="play" :aria-label="t('hero.playAriaLabel')">
                             <img :src="thumbUrl" alt="Video thumbnail" class="h-full w-full object-cover"
                                 loading="eager" decoding="async" />
                             <div
@@ -48,10 +48,8 @@
                 <!-- Heading -->
                 <h1
                     class="lg:mb-4 mt-6 md:mt-8 text-white leading-tight flex items-baseline gap-x-2 justify-center flex-wrap">
-                    <span class="font-hero-title font-bold text-2xl sm:text-3xl md:text-4xl lg:text-5xl">Discover A
-                        Difference</span>
-                    <span class="font-hero-text text-base sm:text-lg md:text-2xl lg:text-3xl opacity-90">with Kreassi
-                        Team</span>
+                    <span class="font-hero-title font-bold text-2xl sm:text-3xl md:text-4xl lg:text-5xl">{{ t('hero.headingPrimary') }}</span>
+                    <span class="font-hero-text text-base sm:text-lg md:text-2xl lg:text-3xl opacity-90">{{ t('hero.headingSecondary') }}</span>
                 </h1>
             </div>
         </div>
@@ -60,6 +58,9 @@
 
 <script setup>
 import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 /* ---------- 1) Configure your source here ---------- */
 // Toggle this if you want auto-start without click

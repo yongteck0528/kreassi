@@ -1,21 +1,25 @@
 <template>
-    <section class="w-full mx-auto px-6 py-8 lg:p-16 grid gap-4 md:grid-cols-10 lg:grid-cols-10 items-center bg-var-8 bg-full">
+    <section
+        class="w-full mx-auto px-6 py-8 lg:p-16 grid gap-4 md:grid-cols-10 lg:grid-cols-10 items-center bg-var-8 bg-full">
         <!-- Left text -->
         <div class="text-center leading-tight px-8 pb-5 md:pb-0 md:col-span-4 lg:text-left md:text-left lg:pb-4">
-            <h1 class="font-uppercase-title mb-0 text-2xl sm:text-3xl md:text-5xl text-[#371055] font-normal">WORKING
-            </h1>
             <h1 class="font-uppercase-title mb-0 text-2xl sm:text-3xl md:text-5xl text-[#371055] font-normal">
-                WITH THE <span class="font-bold">BEST</span>
+                {{ t('partners.titleLine1') }}
             </h1>
-            <h1 class="font-uppercase-title mb-0 text-2xl sm:text-3xl md:text-5xl text-[#371055] font-bold">CLIENTS AND
+            <h1 class="font-uppercase-title mb-0 text-2xl sm:text-3xl md:text-5xl text-[#371055] font-normal uppercase">
+                {{ t('partners.titleLine2Prefix') }} <span class="font-bold">{{ t('partners.titleLine2Highlight') }}</span>
             </h1>
-            <h1 class="font-uppercase-title mb-0 text-2xl sm:text-3xl md:text-5xl text-[#371055] font-bold">PARTNERS
+            <h1 class="font-uppercase-title mb-0 text-2xl sm:text-3xl md:text-5xl text-[#371055] font-bold">
+                {{ t('partners.titleLine3') }}
+            </h1>
+            <h1 class="font-uppercase-title mb-0 text-2xl sm:text-3xl md:text-5xl text-[#371055] font-bold">
+                {{ t('partners.titleLine4') }}
             </h1>
         </div>
 
         <!-- Right logos grid -->
         <div class="w-full md:col-span-6">
-            <div class="grid grid-cols-5 sm:grid-cols-3 md:grid-cols-6 lg:grid-cols-7 gap-2 items-start"
+            <div class="grid grid-cols-5 sm:grid-cols-3 md:grid-cols-6 lg:grid-cols-8 gap-2 items-start"
                 style="min-height: 250px; content-visibility:auto; contain-intrinsic-size: 250px;">
                 <div v-for="(logo, i) in logos" :key="logo.url + i"
                     class="flex items-center justify-center p-2 select-none bg-transparent"
@@ -30,43 +34,55 @@
 </template>
 
 <script setup>
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
+
 // case-sensitive and relative to this file:
 const files = import.meta.glob('../assets/Logos/*.png', { eager: true, as: 'url' })
 
 // Manual order by logo base filename (without extension).
 // Unlisted logos are appended in alphabetical order.
 const preferredOrder = [
-    '2 Points Coffee', 
-    'Ada Jahit', 
-    'Ayam Bebek Pak Boss', 
-    'Ayam Senang', 
-    'Bakso Cuanki Kang Gelo', 
-    'BARA RAMEN', 
-    'Bells', 
-    'Bubur Ayam Rinjani', 
-    'Bumboe RiceBox', 
-    'Buzz Cafe', 
-    'CV Buanna Energi Lokastara', 
-    'Elements Reflexology', 
-    'Glow Billiard', 
-    'Hotel Q', 
-    'Incredibowl', 
-    'JAM', 
-    'JMJ', 
-    'Koto Curry House', 
-    'Kreasi Motor', 
-    'Maison By Model', 
-    'Nasi Goreng Bistik Parama', 
-    'Natrindo USrya Prima', 
-    'Otopia Coating & Detailing', 
-    'Pesona Pack', 
-    'Qubu Resort', 
-    'RND Motor', 
-    'Sosmed Cafe', 
-    'TechLab', 
-    'UdaOlshop', 
-    'UP 2 U Food & Life Junction', 
-    'Xiang Wei'
+    'Qubu Resort',
+    'Asiang',
+    'Abyss',
+    'Elements Refloxology',
+    'Local Kitchen',
+    'Fi_enti',
+    'Putra Borneo Pontianak ',
+    'Pesona Pack',
+    'Hotel Q',
+    'Ayam Senang',
+    'UP 2 U Food & Life Junction',
+    'Buzz Cafe',
+    'Bells',
+    'Ada Jahit',
+    'Nasi Goreng Bistik Parama',
+    'Bumboe RiceBox',
+    'Bakso Cuanki Kang Gelo',
+    'Bubur Ayam Rinjani',
+    'Sosmed Cafe',
+    'Ayam Bebek Pak Boss',
+    'JAM',
+    'BARA RAMEN',
+    'Glow Billiard',
+    'Maison By Model',
+    'Incredibowl',
+    'RND Motor',
+    'UdaOlshop',
+    'Kreasi Motor',
+    '2 Points Coffee',
+    'Xiang Wei',
+    'JMJ',
+    'Kopling Go',
+    'Warung Kopi Sumber Segar',
+    'TechLab',
+    'Max Outlet',
+    'Kopi Gaol',
+    'Koto Curry House',
+    'Otopia Coating & Detailing',
+    'CV Buanna Energi Lokastara',
 ]
 
 const normalize = (value) => value.trim().replace(/\s+/g, ' ')

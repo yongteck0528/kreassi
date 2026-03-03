@@ -51,77 +51,16 @@
 </template>
 
 <script setup>
+import { computed } from 'vue'
 import { Icon } from '@iconify/vue'
+import { useI18n } from 'vue-i18n'
 
-const cards = [
-    {
-        icon: 'diversity_2',
-        title: 'CONSULTATION',
-        intro: 'We start with a focused 15-minutes consultation via Google Meet.',
-        opening: 'This quick yet meaningful session allows us to:',
-        points: [
-            'Understand your brand values, goals, and target audience.',
-            "Identify the challenges you're facing in content creation or digital engagement.",
-            'Share initial recommendations and spark creative direction ideas.'
-        ],
-        outro: 'Our goal at this stage is to listen carefully and align visions before we dive deeper.',
-        footer: 'We listen first - because every brand has a unique story to tell.',
-    },
-    {
-        icon: 'description',
-        title: 'PROPOSAL',
-        intro: 'After the consultation, our team prepares a comprehensive proposal tailored to your brand needs.',
-        opening: 'This document will include:',
-        points: [
-            'A curated content concept based on your goals.',
-            'Recommended deliverables (e.g., feed posts, videos, reels, etc.)',
-            'A clear timeline for planning, production, and revisions.',
-            'Budget estimation, payment terms, and team responsibilities.'
-        ],
-        outro: 'This proposal ensures both parties are aligned on expectations before the work begins.',
-        footer: 'No guesswork - just clarity, structure, and creative direction that fits your brand.',
-    },
-    {
-        icon: 'task_alt',
-        title: 'DEAL & CONFIRMATION',
-        intro: "Once you've reviewed the proposal and everything looks good, simply confirm the project.",
-        opening: 'Upon confirmation, we will:',
-        points: [
-            'Send you the official invoice.',
-            'Set up a dedicated communication group (via WhatsApp)',
-            'Begin our internal onboarding process and task assignments.'
-        ],
-        outro: 'We value transparency and want to make sure every step forward is agreed and well-communicated.',
-        footer: 'Clear communication is the foundation of every great collaboration.',
-    },
-    {
-        icon: 'payments',
-        title: 'PAYMENT',
-        intro: 'Our payment structure is designed to ensure smooth progress and commitment from both sides:',
-        opening: '',
-        points: [
-            '50% Down Payment (DP): Paid upfront to secure the schedule and begin production.',
-            '50% Final Payment: Paid upon project completion, before final file delivery.'
-        ],
-        outro: "All invoices will be issued under Kreassi Team's official account, with clear due dates and payment instructions.",
-        footer: 'We keep things simple, structured, and fair for both parties.',
-    },
-    {
-        icon: 'movie_edit',
-        title: 'PRODUCTION',
-        intro: 'Now the creative journey begins! Once everything is confirmed and payment is received, our team jumps into action.',
-        opening: 'This phase includes:',
-        points: [
-            'Brainstorming sessions & creative planning',
-            'Field documentation (if needed)',
-            'Content creation: design, video, editing, and caption writing',
-            'Client feedback & minor revisions',
-            'Final file delivery, ready to post',
-        ],
-        outro: "We'll keep you updated with progress and previews, so you stay informed every step of the way.",
-        footer: "From concept to content - we make sure every piece reflects your brand's best version.",
-    },
-]
+const { tm } = useI18n()
+
+const cardIcons = ['diversity_2', 'description', 'task_alt', 'payments', 'movie_edit']
+const cards = computed(() =>
+    tm('collaborationStep2.cards').map((card, index) => ({ ...card, icon: cardIcons[index] }))
+)
 
 const pos = [
     'md:col-start-1 lg:col-start-1',

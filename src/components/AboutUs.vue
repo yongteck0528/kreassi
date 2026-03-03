@@ -1,16 +1,17 @@
 <script setup>
-import { ref } from 'vue'
+import { computed } from 'vue'
 import { Icon } from '@iconify/vue'
+import { useI18n } from 'vue-i18n'
 
 import about3x1 from '../assets/Images/AboutUs/AboutUs3x1.JPG'
 import about1x2 from '../assets/Images/AboutUs/AboutUs1x2.JPG'
 import bgGradient from '../assets/Backgrounds/middle-gradient.png'
 
-const features = ref([
-    { id: 1, text: 'Consistency', icon: 'task_alt' },
-    { id: 2, text: 'Collaboration', icon: 'task_alt' },
-    { id: 3, text: 'Creative Impact', icon: 'task_alt' },
-])
+const { t, tm } = useI18n()
+
+const features = computed(() =>
+    tm('aboutUs.features').map((text, index) => ({ id: index + 1, text, icon: 'task_alt' }))
+)
 
 const iconMap = {
     task_alt: 'material-symbols:task-alt',
@@ -24,7 +25,7 @@ const iconify = (name) => iconMap[name] ?? name
         <div class="grid grid-cols-4 gap-x-3 sm:gap-x-4 lg:gap-x-6 items-center">
             <div class="col-span-1">
                 <h1 class="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-primary font-bold text-darkPurple leading-none md:leading-tight">
-                    About<br />Us
+                    {{ t('aboutUs.titleLine1') }}<br />{{ t('aboutUs.titleLine2') }}
                 </h1>
             </div>
 
@@ -32,7 +33,7 @@ const iconify = (name) => iconMap[name] ?? name
                 <div class="mobile-hero rounded-2xl overflow-hidden shadow-sm ring-1 ring-black/5 w-full">
                     <img
                         :src="about3x1"
-                        alt="Team highlight"
+                        :alt="t('aboutUs.imageAltMain')"
                         class="w-full h-full object-cover object-center"
                         loading="lazy"
                         decoding="async"
@@ -48,18 +49,15 @@ const iconify = (name) => iconMap[name] ?? name
             <div>
                 <div class="space-y-6">
                     <h3 class="font-paragraph-title text-base md:text-lg lg:text-xl font-primary text-darkPurple">
-                        Your Creative Growth Partner
+                        {{ t('aboutUs.heading') }}
                     </h3>
 
                     <p class="font-paragraph-text text-sm md:text-base lg:text-lg text-darkPurple font-primary leading-relaxed">
-                        Founded on August 8, 2021, Kreassi Team is built on a mission to drive digital transformation through social media.
-                        We're not just content creators - we're your strategic creative partner.
+                        {{ t('aboutUs.p1') }}
                     </p>
 
                     <p class="font-paragraph-text text-sm md:text-base lg:text-lg text-darkPurple font-primary leading-relaxed">
-                        From visual branding to digital storytelling, our passion lies in crafting scroll-stopping content and building
-                        strong online communities. Whether you're launching, scaling, or rebranding, we bring structure, speed, and style
-                        to your digital game.
+                        {{ t('aboutUs.p2') }}
                     </p>
                 </div>
 
@@ -85,7 +83,7 @@ const iconify = (name) => iconMap[name] ?? name
 
             <aside class="hidden md:block md:self-start md:justify-self-end md:translate-x-2 lg:translate-x-3">
                 <div class="w-full max-w-[190px] lg:max-w-[200px] rounded-2xl overflow-hidden shadow-sm ring-1 ring-black/5" style="aspect-ratio: 3 / 5;">
-                    <img :src="about1x2" alt="Team portrait" class="w-full h-full object-cover" loading="lazy" decoding="async" style="object-position: 50% 30%;" />
+                    <img :src="about1x2" :alt="t('aboutUs.imageAltSide')" class="w-full h-full object-cover" loading="lazy" decoding="async" style="object-position: 50% 30%;" />
                 </div>
             </aside>
         </div>

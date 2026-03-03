@@ -3,10 +3,10 @@
     <section class="w-full min-h-[75svh] md:min-h-[100svh] flex flex-col items-center justify-center px-4">
         <!-- Heading -->
         <h2 class="text-3xl sm:text-4xl md:text-[48px] font-bold text-center text-darkPurple">
-            COLLABORATION STEPS
+            {{ t('collaborationStep.title') }}
         </h2>
         <p class="mt-2 text-center tracking-widest uppercase text-darkPurple/70">
-            WITH KREASSI TEAM
+            {{ t('collaborationStep.subtitle') }}
         </p>
 
         <ul class="mt-12 mx-auto list-none p-0 gap-2">
@@ -38,15 +38,16 @@
 </template>
 
 <script setup>
-import { Icon } from '@iconify/vue';
+import { computed } from 'vue'
+import { Icon } from '@iconify/vue'
+import { useI18n } from 'vue-i18n'
 
-const steps = [
-    { icon: 'video_call', title: 'Consultation (15 Minutes)', description: 'Quick Google Meet to discuss your needs.' },
-    { icon: 'description', title: 'Proposal', description: 'We send a tailored content & pricing plan.' },
-    { icon: 'checklist', title: 'Deal and Confirmation', description: 'Confirmed to proceed. Invoice sent.' },
-    { icon: 'credit_card', title: 'Payment', description: '50% upfront, 50% after content is delivered.' },
-    { icon: 'movie_edit', title: 'Production', description: 'Our team starts creating your content!' },
-]
+const { t, tm } = useI18n()
+
+const stepIcons = ['video_call', 'description', 'checklist', 'credit_card', 'movie_edit']
+const steps = computed(() =>
+    tm('collaborationStep.steps').map((step, index) => ({ ...step, icon: stepIcons[index] }))
+)
 
 const ICONS = {
     video_call: 'material-symbols:video-call-rounded',
