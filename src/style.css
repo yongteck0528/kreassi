@@ -1,0 +1,77 @@
+/* Scroll reveal */
+.reveal {
+  opacity: 0;
+  transform: translateY(16px) scale(0.98);
+  transition: opacity 420ms ease, transform 420ms cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: opacity, transform;
+}
+
+.reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    transition: none;
+    transform: none;
+    opacity: 1;
+  }
+}
+
+/* Partner logo stagger + hover micro-motion */
+.partner-logo.reveal {
+  transition-delay: 0ms;
+}
+
+.partner-logo.reveal:nth-child(5n + 1) { transition-delay: 0ms; }
+.partner-logo.reveal:nth-child(5n + 2) { transition-delay: 70ms; }
+.partner-logo.reveal:nth-child(5n + 3) { transition-delay: 140ms; }
+.partner-logo.reveal:nth-child(5n + 4) { transition-delay: 210ms; }
+.partner-logo.reveal:nth-child(5n + 5) { transition-delay: 280ms; }
+
+@media (min-width: 640px) {
+  .partner-logo.reveal:nth-child(3n + 1) { transition-delay: 0ms; }
+  .partner-logo.reveal:nth-child(3n + 2) { transition-delay: 80ms; }
+  .partner-logo.reveal:nth-child(3n + 3) { transition-delay: 160ms; }
+}
+
+@media (min-width: 768px) {
+  .partner-logo.reveal:nth-child(6n + 1) { transition-delay: 0ms; }
+  .partner-logo.reveal:nth-child(6n + 2) { transition-delay: 60ms; }
+  .partner-logo.reveal:nth-child(6n + 3) { transition-delay: 120ms; }
+  .partner-logo.reveal:nth-child(6n + 4) { transition-delay: 180ms; }
+  .partner-logo.reveal:nth-child(6n + 5) { transition-delay: 240ms; }
+  .partner-logo.reveal:nth-child(6n + 6) { transition-delay: 300ms; }
+}
+
+@media (min-width: 1024px) {
+  .partner-logo.reveal:nth-child(8n + 1) { transition-delay: 0ms; }
+  .partner-logo.reveal:nth-child(8n + 2) { transition-delay: 60ms; }
+  .partner-logo.reveal:nth-child(8n + 3) { transition-delay: 120ms; }
+  .partner-logo.reveal:nth-child(8n + 4) { transition-delay: 180ms; }
+  .partner-logo.reveal:nth-child(8n + 5) { transition-delay: 240ms; }
+  .partner-logo.reveal:nth-child(8n + 6) { transition-delay: 300ms; }
+  .partner-logo.reveal:nth-child(8n + 7) { transition-delay: 360ms; }
+  .partner-logo.reveal:nth-child(8n + 8) { transition-delay: 420ms; }
+}
+
+.partner-logo-img {
+  transition: transform 220ms ease, filter 220ms ease;
+  will-change: transform;
+}
+
+.partner-logo:hover .partner-logo-img {
+  transform: translateY(-4px) scale(1.04);
+  filter: saturate(1.08);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .partner-logo-img {
+    transition: none;
+  }
+  .partner-logo:hover .partner-logo-img {
+    transform: none;
+    filter: none;
+  }
+}
