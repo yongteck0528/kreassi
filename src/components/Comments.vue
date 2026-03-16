@@ -8,52 +8,24 @@ const logoError = ref(false)
 const comments = ref([
     {
         id: 1,
-        customer_name: 'Jane Doe',
-        comment: 'Clear value and smooth delivery. Our KPIs improved within the first month.',
+        customer_name: 'Andrew',
+        comment: 'Hasil yang diberikan sudah sangat baik terutama dari segi design, kecepatan respon, dan waktu pengerjaannya yang terbilang cepat',
         rating: 5,
-        company: { name: 'Bakso Chuanki Kang Gelo ', logo: LOGO('Bakso Cuanki Kang Gelo ') }
+        company: { name: 'Mahasiswa', logo: "" }
     },
     {
         id: 2,
-        customer_name: 'Ryan P.',
-        comment: 'Creative that actually performs. Solid iteration tempo and good communication.',
-        rating: 4,
-        company: { name: 'Hotel Q', logo: LOGO('Hotel Q ') }
+        customer_name: 'Miranda',
+        comment: 'Thank you Kreassi tim udah do their best untuk bantu kami mulai dari segi sosmed, design web, hingga design packaging. Semuanya dilakukan secara komunikatif dan kooperatif. All the best for Kreassi Team!',
+        rating: 5,
+        company: { name: 'Natrindo', logo: LOGO('Natrindo USrya Prima ') }
     },
     {
         id: 3,
-        customer_name: 'Maya L.',
-        comment: 'Loved the motion graphics and the brand system refresh. Highly recommended.',
+        customer_name: 'Hansen',
+        comment: 'Semuanya sangat baikk, memberikan solusi dan inisiatif kepada client. ',
         rating: 5,
-        company: { name: 'Kreasi Motor', logo: LOGO('Kreasi Motor') }
-    },
-    {
-        id: 4,
-        customer_name: 'Alex T.',
-        comment: 'Professional team with great attention to detail. Our social media presence has never been better.',
-        rating: 5,
-        company: { name: 'Incredibowl', logo: LOGO('Incredibowl ') }
-    },
-    {
-        id: 5,
-        customer_name: 'Samantha R.',
-        comment: 'The content creation services provided were top-notch and really helped boost our engagement.',
-        rating: 4,
-        company: { name: 'JAM', logo: LOGO('JAM ') }
-    },
-    {
-        id: 6,
-        customer_name: 'David K.',
-        comment: 'Excellent service and results. Our brand visibility has significantly increased.',
-        rating: 5,
-        company: { name: 'Up 2 U Food & Life Junction', logo: LOGO('UP 2 U Food & Life Junction ') }
-    },
-    {
-        id: 7,
-        customer_name: 'Linda M.',
-        comment: 'Creative concepts that truly resonate with our audience. The team was a pleasure to work with.',
-        rating: 5,
-        company: { name: 'Mahasiswa', logo: '' }
+        company: { name: 'Otopia', logo: LOGO('Otopia Coating & Detailing ') }
     }
 ])
 
