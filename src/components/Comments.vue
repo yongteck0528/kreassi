@@ -26,7 +26,21 @@ const comments = ref([
         comment: 'Semuanya sangat baikk, memberikan solusi dan inisiatif kepada client. ',
         rating: 5,
         company: { name: 'Otopia', logo: LOGO('Otopia Coating & Detailing ') }
-    }
+    },
+    {
+        id: 4,
+        customer_name: 'Marco',
+        comment: 'Fast response, product photography yang menarik',
+        rating: 5,
+        company: { name: '2 Points Coffee', logo: LOGO('2 Points Coffee ') }
+    },
+    {
+        id: 5,
+        customer_name: 'Klemens',
+        comment: 'Terima kasih Kreassi Team yang sudah membantu kami selama beberapa bulan terakhir. Semua design request dikerjakan dengan baik dan sangat membantu kebutuhan brand kami. Prosesnya juga lancar dan responsif. Sukses selalu untuk Kreassi Team!',
+        rating: 5,
+        company: { name: 'Pesona Pack', logo: LOGO('Pesona Pack ') }
+    },
 ])
 
 const wrapEl = ref(null)
@@ -195,7 +209,7 @@ const trailingSpacerPx = computed(() =>
                         </div>
 
                         <div class="flex-1">
-                            <p class="leading-relaxed opacity-95 line-clamp-4" :style="{ fontSize: 'var(--fs-body)' }">
+                            <p class="leading-relaxed opacity-95 line-clamp-5" :style="{ fontSize: 'var(--fs-body)' }">
                                 {{ comment?.comment || '' }}
                             </p>
                         </div>
@@ -248,11 +262,11 @@ const trailingSpacerPx = computed(() =>
 </template>
 
 <style scoped>
-.line-clamp-4 {
+.line-clamp-5 {
     display: -webkit-box;
     -webkit-box-orient: vertical;
-    -webkit-line-clamp: 4;
-    line-clamp: 4;
+    -webkit-line-clamp: 5;
+    line-clamp: 5;
     overflow: hidden;
 }
 </style>

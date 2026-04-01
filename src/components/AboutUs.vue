@@ -3,8 +3,8 @@ import { computed } from 'vue'
 import { Icon } from '@iconify/vue'
 import { useI18n } from 'vue-i18n'
 
-import about3x1 from '../assets/Images/AboutUs/AboutUs3x1.JPG'
-import about1x2 from '../assets/Images/AboutUs/AboutUs1x2.JPG'
+import about3x1 from '../assets/Images/AboutUs/About_us.png'
+import about1x2 from '../assets/Images/AboutUs/About_us_2.png'
 import bgGradient from '../assets/Backgrounds/middle-gradient.png'
 
 const { t, tm } = useI18n()
@@ -44,19 +44,19 @@ const iconify = (name) => iconMap[name] ?? name
         </div>
 
         <div
-            class="grid grid-cols-1 md:grid-cols-[minmax(0,1fr)_minmax(180px,240px)] lg:grid-cols-[minmax(0,1fr)_minmax(210px,280px)] gap-x-4 lg:gap-x-6 gap-y-10 items-start"
+            class="grid grid-cols-1 md:grid-cols-[minmax(0,1fr)_minmax(220px,300px)] lg:grid-cols-[minmax(0,1fr)_minmax(240px,340px)] gap-x-4 lg:gap-x-6 gap-y-10 items-start"
         >
             <div>
                 <div class="space-y-6">
-                    <h3 class="font-paragraph-title text-base md:text-lg lg:text-xl font-primary text-darkPurple">
+                    <h3 class="font-paragraph-title text-lg md:text-xl lg:text-2xl font-primary text-darkPurple">
                         {{ t('aboutUs.heading') }}
                     </h3>
 
-                    <p class="font-paragraph-text text-sm md:text-base lg:text-lg text-darkPurple font-primary leading-relaxed">
+                    <p class="font-paragraph-text text-base md:text-lg lg:text-xl text-darkPurple font-primary leading-relaxed">
                         {{ t('aboutUs.p1') }}
                     </p>
 
-                    <p class="font-paragraph-text text-sm md:text-base lg:text-lg text-darkPurple font-primary leading-relaxed">
+                    <p class="font-paragraph-text text-base md:text-lg lg:text-xl text-darkPurple font-primary leading-relaxed">
                         {{ t('aboutUs.p2') }}
                     </p>
                 </div>
@@ -65,7 +65,7 @@ const iconify = (name) => iconMap[name] ?? name
                     <div class="grid grid-cols-3 gap-2 sm:gap-4 md:gap-2">
                         <div v-for="feature in features" :key="feature.id" class="min-w-0">
                             <div
-                                class="w-full flex items-center justify-start text-left px-2 py-2 text-[11px] sm:px-4 sm:py-2.5 sm:text-xs lg:px-6 lg:py-3 lg:text-sm rounded-full shadow-md hover:shadow-lg transition-shadow duration-200 bg-no-repeat bg-cover bg-center"
+                                class="w-full flex items-center justify-start text-left px-2 py-2 text-xs sm:px-4 sm:py-2.5 sm:text-sm lg:px-6 lg:py-3 lg:text-base rounded-full shadow-md hover:shadow-lg transition-shadow duration-200 bg-no-repeat bg-cover bg-center"
                                 :style="{ backgroundImage: `url(${bgGradient})` }"
                             >
                                 <span class="mr-2 inline-flex items-center justify-center w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-white shadow shrink-0">
@@ -82,7 +82,7 @@ const iconify = (name) => iconMap[name] ?? name
             </div>
 
             <aside class="hidden md:block md:self-start md:justify-self-end md:translate-x-2 lg:translate-x-3">
-                <div class="w-full max-w-[190px] lg:max-w-[200px] rounded-2xl overflow-hidden shadow-sm ring-1 ring-black/5" style="aspect-ratio: 3 / 5;">
+                <div class="w-full max-w-[230px] lg:max-w-[260px] rounded-2xl overflow-hidden shadow-sm ring-1 ring-black/5" style="aspect-ratio: 3 / 5;">
                     <img :src="about1x2" :alt="t('aboutUs.imageAltSide')" class="w-full h-full object-cover" loading="lazy" decoding="async" style="object-position: 50% 30%;" />
                 </div>
             </aside>
