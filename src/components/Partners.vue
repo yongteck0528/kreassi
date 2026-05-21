@@ -89,6 +89,7 @@ const preferredOrder = [
 const normalize = (value) => value.trim().replace(/\s+/g, ' ')
 const collator = new Intl.Collator('en', { sensitivity: 'base' })
 const orderRank = new Map(preferredOrder.map((name, index) => [normalize(name), index]))
+const LOGO_LIMIT = 40
 
 const logos = Object.entries(files)
     .map(([path, url]) => {
@@ -108,4 +109,5 @@ const logos = Object.entries(files)
         if (bHasRank) return 1
         return collator.compare(a.sortKey, b.sortKey)
     })
+    .slice(0, LOGO_LIMIT)
 </script>

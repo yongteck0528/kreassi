@@ -2,10 +2,48 @@
 import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import { Icon } from '@iconify/vue'
 
-const LOGO = (name) => new URL(`../assets/Logos/${name}.png`, import.meta.url).href
-const logoError = ref(false)
+const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/1si6NiseBOoa5k9u4UALdJDH9QGmr_yODgCFhx-wmGj0/gviz/tq?tqx=out:csv'
 
-const comments = ref([
+const logoFiles = import.meta.glob('../assets/Logos/*.png', {
+    eager: true,
+    query: '?url',
+    import: 'default',
+})
+
+const normalizeLogoName = (name) => String(name || '')
+    .trim()
+    .replace(/\.[^.]+$/, '')
+    .trim()
+    .replace(/[-_]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .toLowerCase()
+
+const logoByName = new Map(Object.entries(logoFiles).map(([path, url]) => {
+    const filename = path.split('/').pop() || ''
+    return [normalizeLogoName(filename), url]
+}))
+
+const LOGO = (name) => {
+    const value = String(name || '').trim()
+    if (/^https?:\/\//i.test(value)) return value
+    return logoByName.get(normalizeLogoName(value)) || ''
+}
+
+const failedLogoKeys = ref(new Set())
+const logoErrorKey = (comment, index) => `${comment?.id ?? index}:${comment?.company?.logo || ''}`
+const hasLogoError = (comment, index) => failedLogoKeys.value.has(logoErrorKey(comment, index))
+const markLogoError = (comment, index) => {
+    failedLogoKeys.value = new Set([...failedLogoKeys.value, logoErrorKey(comment, index)])
+}
+
+const clampInt = (n) => {
+    const v = Number(n)
+    if (!Number.isFinite(v)) return 0
+    return Math.max(0, Math.min(5, Math.round(v)))
+}
+
+const fallbackComments = [
     {
         id: 1,
         customer_name: 'Andrew',
@@ -41,7 +79,105 @@ const comments = ref([
         rating: 5,
         company: { name: 'Pesona Pack', logo: LOGO('Pesona Pack ') }
     },
-])
+    {
+        id: 6,
+        customer_name: 'Bangun Gesang',
+        comment: 'Pekerjaan dilakukan dengan sangat cepat dan respon tim yang sangat kooperatif',
+        rating: 5,
+        company: { name: 'Lamtara', logo: LOGO('Lamtara ') }
+    },
+]
+
+const comments = ref([...fallbackComments])
+
+const parseCsv = (csv) => {
+    const rows = []
+    let row = []
+    let cell = ''
+    let inQuotes = false
+
+    for (let i = 0; i < csv.length; i++) {
+        const char = csv[i]
+        const next = csv[i + 1]
+
+        if (char === '"') {
+            if (inQuotes && next === '"') {
+                cell += '"'
+                i++
+            } else {
+                inQuotes = !inQuotes
+            }
+        } else if (char === ',' && !inQuotes) {
+            row.push(cell)
+            cell = ''
+        } else if ((char === '\n' || char === '\r') && !inQuotes) {
+            if (char === '\r' && next === '\n') i++
+            row.push(cell)
+            if (row.some(value => value.trim())) rows.push(row)
+            row = []
+            cell = ''
+        } else {
+            cell += char
+        }
+    }
+
+    row.push(cell)
+    if (row.some(value => value.trim())) rows.push(row)
+
+    return rows
+}
+
+const isVisible = (value) => {
+    const normalized = String(value || '').trim().toLowerCase()
+    return !['false', '0', 'no', 'n', 'hidden'].includes(normalized)
+}
+
+const numberOrNull = (value) => {
+    const number = Number(value)
+    return Number.isFinite(number) ? number : null
+}
+
+const firstValue = (...values) => values
+    .map(value => String(value || '').trim())
+    .find(Boolean) || ''
+
+const parseSheetComments = (csv) => {
+    const [headers = [], ...dataRows] = parseCsv(csv)
+    const keys = headers.map(header => header.trim().toLowerCase())
+
+    return dataRows
+        .map((row, rowIndex) => {
+            const entry = Object.fromEntries(keys.map((key, columnIndex) => [key, row[columnIndex] || '']))
+            const logoFile = firstValue(entry.logo_file, entry.logo, entry.logo_url)
+            const companyName = firstValue(entry.company_name, entry.company, logoFile)
+
+            return {
+                id: numberOrNull(entry.id) ?? rowIndex + 1,
+                customer_name: firstValue(entry.customer_name, entry.name),
+                comment: firstValue(entry.comment, entry.testimonial),
+                rating: clampInt(firstValue(entry.rating, 5)),
+                company: {
+                    name: companyName,
+                    logo: LOGO(logoFile),
+                },
+                _rowIndex: rowIndex,
+                _sortOrder: numberOrNull(entry.sort_order),
+                _visible: isVisible(entry.visible),
+            }
+        })
+        .filter(comment => comment._visible)
+        .filter(comment => comment.customer_name || comment.comment || comment.company.name)
+        .sort((a, b) => {
+            const aHasOrder = a._sortOrder !== null
+            const bHasOrder = b._sortOrder !== null
+
+            if (aHasOrder && bHasOrder) return a._sortOrder - b._sortOrder
+            if (aHasOrder) return -1
+            if (bHasOrder) return 1
+            return a._rowIndex - b._rowIndex
+        })
+        .map(({ _rowIndex, _sortOrder, _visible, ...comment }) => comment)
+}
 
 const wrapEl = ref(null)
 const viewportEl = ref(null)
@@ -115,8 +251,25 @@ const recalc = () => {
     })
 }
 
+const loadCommentsFromSheet = async () => {
+    try {
+        const response = await fetch(SHEET_CSV_URL, { cache: 'no-store' })
+        if (!response.ok) throw new Error(`Google Sheet returned ${response.status}`)
+
+        const sheetComments = parseSheetComments(await response.text())
+        if (!sheetComments.length) return
+
+        comments.value = sheetComments
+        currentIndex.value = 0
+        recalc()
+    } catch (error) {
+        console.warn('Could not load testimonials from Google Sheets:', error)
+    }
+}
+
 onMounted(() => {
     recalc()
+    loadCommentsFromSheet()
     ro = new ResizeObserver(recalc)
     if (viewportEl.value) ro.observe(viewportEl.value)
     window.addEventListener('orientationchange', recalc)
@@ -150,11 +303,6 @@ function onTouchEnd() {
     deltaX = 0
 }
 
-const clampInt = (n) => {
-    const v = Number(n)
-    if (!Number.isFinite(v)) return 0
-    return Math.max(0, Math.min(5, Math.round(v)))
-}
 const starsFor = (n) => {
     const r = clampInt(n)
     return Array.from({ length: 5 }, (_, i) => i < r)
@@ -189,9 +337,9 @@ const trailingSpacerPx = computed(() =>
                         <div class="flex items-center gap-3 sm:gap-4 mb-3 sm:mb-4 flex-shrink-0">
                             <div
                                 class="w-10 h-10 sm:w-12 sm:h-12 rounded-full overflow-hidden bg-white border-2 border-white/30 flex items-center justify-center">
-                                <img v-if="comment?.company?.logo && !logoError" :src="comment.company.logo"
+                                <img v-if="comment?.company?.logo && !hasLogoError(comment, index)" :src="comment.company.logo"
                                     :alt="comment?.company?.name ? `${comment.company.name} logo` : 'Company logo'"
-                                    class="w-full h-full object-cover" loading="lazy" @error="logoError = true" />
+                                    class="w-full h-full object-cover" loading="lazy" @error="markLogoError(comment, index)" />
 
                                 <Icon v-else icon="mdi:account-circle"
                                     class="w-8 h-8 sm:w-9 sm:h-9 text-darkPurple"
