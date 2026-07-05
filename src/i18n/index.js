@@ -1,3 +1,4 @@
+import { watch } from 'vue'
 import { createI18n } from 'vue-i18n'
 import { messages } from './messages'
 
@@ -26,4 +27,15 @@ export const i18n = createI18n({
     messages,
 })
 
-export { STORAGE_KEY }
+// Persist the locale and keep <html lang> in sync (SEO/accessibility)
+// whenever it changes, no matter which component changed it.
+watch(
+    i18n.global.locale,
+    (locale) => {
+        localStorage.setItem(STORAGE_KEY, locale)
+        document.documentElement.lang = locale
+    },
+    { immediate: true },
+)
+
+export { STORAGE_KEY, SUPPORTED_LOCALES, DEFAULT_LOCALE }

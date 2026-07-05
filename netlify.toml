@@ -1,0 +1,16 @@
+# Netlify build configuration — keeps deploy settings version-controlled
+# instead of only living in the Netlify UI.
+
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  # Vite 7 requires Node >= 20.19; pin so Netlify image changes can't break builds.
+  NODE_VERSION = "22"
+
+# SPA fallback (public/_redirects does the same; this is the canonical copy).
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

@@ -8,6 +8,19 @@ export const messages = {
             contact: 'Contact Us',
             partners: 'Partners',
             languageToggle: 'Switch language',
+            menuToggle: 'Toggle navigation menu',
+        },
+        footer: {
+            // NOTE: kept identical in both locales on purpose (footer has always
+            // displayed English). Translate the `id` copies when the design team approves.
+            heading: 'LET’S WORK TOGETHER',
+            taglineHighlight: 'Discover a new',
+            taglineRest: 'difference for your business',
+            inquiriesTitle: 'Inquiries',
+            emailTitle: 'Email Us',
+            copyright: '© 2025 Kreassi. All rights reserved.',
+            socialAriaLabel: 'Social links',
+            logoAlt: 'Kreassi Team logo',
         },
         partners: {
             titleLine1: 'WORKING',
@@ -30,6 +43,8 @@ export const messages = {
             headingSecondary: 'with Kreassi Team',
             playAriaLabel: 'Play featured video',
             videoTitle: 'Hero video',
+            muteAriaLabel: 'Mute video',
+            unmuteAriaLabel: 'Unmute video',
         },
         aboutUs: {
             titleLine1: 'About',
@@ -178,6 +193,17 @@ export const messages = {
             contact: 'Kontak',
             partners: 'Mitra',
             languageToggle: 'Ganti bahasa',
+            menuToggle: 'Buka/tutup menu navigasi',
+        },
+        footer: {
+            heading: 'LET’S WORK TOGETHER',
+            taglineHighlight: 'Discover a new',
+            taglineRest: 'difference for your business',
+            inquiriesTitle: 'Inquiries',
+            emailTitle: 'Email Us',
+            copyright: '© 2025 Kreassi. All rights reserved.',
+            socialAriaLabel: 'Social links',
+            logoAlt: 'Kreassi Team logo',
         },
         partners: {
             titleLine1: 'BEKERJA',
@@ -200,6 +226,8 @@ export const messages = {
             headingSecondary: 'bersama Kreassi Team',
             playAriaLabel: 'Putar video unggulan',
             videoTitle: 'Video utama',
+            muteAriaLabel: 'Matikan suara video',
+            unmuteAriaLabel: 'Nyalakan suara video',
         },
         aboutUs: {
             titleLine1: 'Tentang',

@@ -1,4 +1,23 @@
-/* Scroll reveal */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ---------------------------------------------------------------------------
+   Global behaviour
+--------------------------------------------------------------------------- */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Make anchor jumps land below the sticky header (h-16 = 64px). */
+.section,
+:target {
+  scroll-margin-top: 64px;
+}
+
+/* ---------------------------------------------------------------------------
+   Scroll reveal (v-reveal directive, see src/directives/reveal.js)
+--------------------------------------------------------------------------- */
 .reveal {
   opacity: 0;
   transform: translateY(16px) scale(0.98);
@@ -8,7 +27,10 @@
 
 .reveal.is-visible {
   opacity: 1;
-  transform: translateY(0) scale(1);
+  /* `none` (not translateY(0)) so the compositing layer is released after the
+     animation — keeps text rasterization identical to non-animated elements. */
+  transform: none;
+  will-change: auto;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -17,10 +39,11 @@
     transform: none;
     opacity: 1;
   }
-
 }
 
-/* Partner logo stagger + hover micro-motion */
+/* ---------------------------------------------------------------------------
+   Partner logo stagger + hover micro-motion
+--------------------------------------------------------------------------- */
 .partner-logo.reveal {
   transition-delay: 0ms;
 }

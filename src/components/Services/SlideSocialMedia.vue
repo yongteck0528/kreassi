@@ -1,12 +1,10 @@
 <script setup>
-const files = import.meta.glob(
-    '../../assets/Images/Services/Social Media Management/*.png',
-    { eager: true, as: 'url' }
-)
+import { sortedImageUrls } from '../../utils/assets'
 
-const imgs = Object.entries(files)
-    .sort((a, b) => Number(a[0].match(/(\d+)\.png$/)[1]) - Number(b[0].match(/(\d+)\.png$/)[1]))
-    .map(([_, url]) => url)
+const imgs = sortedImageUrls(import.meta.glob(
+    '../../assets/Images/Services/Social Media Management/*.png',
+    { eager: true, query: '?url', import: 'default' }
+))
 </script>
 
 <template>
@@ -16,11 +14,11 @@ const imgs = Object.entries(files)
         <div v-for="(src, i) in imgs" :key="i">
             <img
                 :src="src"
-                alt=""
+                alt="Social media management portfolio example"
                 class="w-full h-[clamp(110px,30vh,220px)] md:h-[clamp(260px,48vh,480px)] lg:h-[clamp(300px,52vh,560px)] object-contain"
                 loading="lazy"
                 decoding="async"
             />
-            </div>
+        </div>
     </div>
 </template>

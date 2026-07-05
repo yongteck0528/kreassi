@@ -1,35 +1,11 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import { Icon } from '@iconify/vue'
+import { useTestimonials, clampRating } from '../composables/useTestimonials'
 
-const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/1si6NiseBOoa5k9u4UALdJDH9QGmr_yODgCFhx-wmGj0/gviz/tq?tqx=out:csv'
+const { testimonials: comments, load } = useTestimonials()
 
-const logoFiles = import.meta.glob('../assets/Logos/*.png', {
-    eager: true,
-    query: '?url',
-    import: 'default',
-})
-
-const normalizeLogoName = (name) => String(name || '')
-    .trim()
-    .replace(/\.[^.]+$/, '')
-    .trim()
-    .replace(/[-_]+/g, ' ')
-    .replace(/\s+/g, ' ')
-    .trim()
-    .toLowerCase()
-
-const logoByName = new Map(Object.entries(logoFiles).map(([path, url]) => {
-    const filename = path.split('/').pop() || ''
-    return [normalizeLogoName(filename), url]
-}))
-
-const LOGO = (name) => {
-    const value = String(name || '').trim()
-    if (/^https?:\/\//i.test(value)) return value
-    return logoByName.get(normalizeLogoName(value)) || ''
-}
-
+/* ---------- Logo error fallback (avatar icon when an image 404s) ---------- */
 const failedLogoKeys = ref(new Set())
 const logoErrorKey = (comment, index) => `${comment?.id ?? index}:${comment?.company?.logo || ''}`
 const hasLogoError = (comment, index) => failedLogoKeys.value.has(logoErrorKey(comment, index))
@@ -37,148 +13,7 @@ const markLogoError = (comment, index) => {
     failedLogoKeys.value = new Set([...failedLogoKeys.value, logoErrorKey(comment, index)])
 }
 
-const clampInt = (n) => {
-    const v = Number(n)
-    if (!Number.isFinite(v)) return 0
-    return Math.max(0, Math.min(5, Math.round(v)))
-}
-
-const fallbackComments = [
-    {
-        id: 1,
-        customer_name: 'Andrew',
-        comment: 'Hasil yang diberikan sudah sangat baik terutama dari segi design, kecepatan respon, dan waktu pengerjaannya yang terbilang cepat',
-        rating: 5,
-        company: { name: 'Mahasiswa', logo: "" }
-    },
-    {
-        id: 2,
-        customer_name: 'Miranda',
-        comment: 'Thank you Kreassi tim udah do their best untuk bantu kami mulai dari segi sosmed, design web, hingga design packaging. Semuanya dilakukan secara komunikatif dan kooperatif. All the best for Kreassi Team!',
-        rating: 5,
-        company: { name: 'Natrindo', logo: LOGO('Natrindo USrya Prima ') }
-    },
-    {
-        id: 3,
-        customer_name: 'Hansen',
-        comment: 'Semuanya sangat baikk, memberikan solusi dan inisiatif kepada client. ',
-        rating: 5,
-        company: { name: 'Otopia', logo: LOGO('Otopia Coating & Detailing ') }
-    },
-    {
-        id: 4,
-        customer_name: 'Marco',
-        comment: 'Fast response, product photography yang menarik',
-        rating: 5,
-        company: { name: '2 Points Coffee', logo: LOGO('2 Points Coffee ') }
-    },
-    {
-        id: 5,
-        customer_name: 'Klemens',
-        comment: 'Terima kasih Kreassi Team yang sudah membantu kami selama beberapa bulan terakhir. Semua design request dikerjakan dengan baik dan sangat membantu kebutuhan brand kami. Prosesnya juga lancar dan responsif. Sukses selalu untuk Kreassi Team!',
-        rating: 5,
-        company: { name: 'Pesona Pack', logo: LOGO('Pesona Pack ') }
-    },
-    {
-        id: 6,
-        customer_name: 'Bangun Gesang',
-        comment: 'Pekerjaan dilakukan dengan sangat cepat dan respon tim yang sangat kooperatif',
-        rating: 5,
-        company: { name: 'Lamtara', logo: LOGO('Lamtara ') }
-    },
-]
-
-const comments = ref([...fallbackComments])
-
-const parseCsv = (csv) => {
-    const rows = []
-    let row = []
-    let cell = ''
-    let inQuotes = false
-
-    for (let i = 0; i < csv.length; i++) {
-        const char = csv[i]
-        const next = csv[i + 1]
-
-        if (char === '"') {
-            if (inQuotes && next === '"') {
-                cell += '"'
-                i++
-            } else {
-                inQuotes = !inQuotes
-            }
-        } else if (char === ',' && !inQuotes) {
-            row.push(cell)
-            cell = ''
-        } else if ((char === '\n' || char === '\r') && !inQuotes) {
-            if (char === '\r' && next === '\n') i++
-            row.push(cell)
-            if (row.some(value => value.trim())) rows.push(row)
-            row = []
-            cell = ''
-        } else {
-            cell += char
-        }
-    }
-
-    row.push(cell)
-    if (row.some(value => value.trim())) rows.push(row)
-
-    return rows
-}
-
-const isVisible = (value) => {
-    const normalized = String(value || '').trim().toLowerCase()
-    return !['false', '0', 'no', 'n', 'hidden'].includes(normalized)
-}
-
-const numberOrNull = (value) => {
-    const number = Number(value)
-    return Number.isFinite(number) ? number : null
-}
-
-const firstValue = (...values) => values
-    .map(value => String(value || '').trim())
-    .find(Boolean) || ''
-
-const parseSheetComments = (csv) => {
-    const [headers = [], ...dataRows] = parseCsv(csv)
-    const keys = headers.map(header => header.trim().toLowerCase())
-
-    return dataRows
-        .map((row, rowIndex) => {
-            const entry = Object.fromEntries(keys.map((key, columnIndex) => [key, row[columnIndex] || '']))
-            const logoFile = firstValue(entry.logo_file, entry.logo, entry.logo_url)
-            const companyName = firstValue(entry.company_name, entry.company, logoFile)
-
-            return {
-                id: numberOrNull(entry.id) ?? rowIndex + 1,
-                customer_name: firstValue(entry.customer_name, entry.name),
-                comment: firstValue(entry.comment, entry.testimonial),
-                rating: clampInt(firstValue(entry.rating, 5)),
-                company: {
-                    name: companyName,
-                    logo: LOGO(logoFile),
-                },
-                _rowIndex: rowIndex,
-                _sortOrder: numberOrNull(entry.sort_order),
-                _visible: isVisible(entry.visible),
-            }
-        })
-        .filter(comment => comment._visible)
-        .filter(comment => comment.customer_name || comment.comment || comment.company.name)
-        .sort((a, b) => {
-            const aHasOrder = a._sortOrder !== null
-            const bHasOrder = b._sortOrder !== null
-
-            if (aHasOrder && bHasOrder) return a._sortOrder - b._sortOrder
-            if (aHasOrder) return -1
-            if (bHasOrder) return 1
-            return a._rowIndex - b._rowIndex
-        })
-        .map(({ _rowIndex, _sortOrder, _visible, ...comment }) => comment)
-}
-
+/* ---------- Carousel state & responsive sizing ---------- */
 const wrapEl = ref(null)
 const viewportEl = ref(null)
 
@@ -217,59 +52,38 @@ const getViewportMetrics = () => {
     return { inner: Math.max(w - pl - pr, 0), pl, pr }
 }
 
+// Breakpoint rules for how many cards fit and how large they are.
+const SIZE_RULES = [
+    { maxInner: 425, slots: 1, gap: 12, minW: 280, maxW: 420, height: 200 },
+    { maxInner: 768, slots: 1.6, gap: 16, minW: 300, maxW: 480, height: 230 },
+    { maxInner: Infinity, slots: 3, gap: 20, minW: 320, maxW: 520, height: 260 },
+]
+
 let ro = null
 let rafId = null
 const recalc = () => {
     if (rafId) cancelAnimationFrame(rafId)
     rafId = requestAnimationFrame(() => {
         const { inner } = getViewportMetrics()
+        const rule = SIZE_RULES.find(r => inner < r.maxInner)
 
-        if (inner < 425) {
-            visibleSlots.value = 1
-            gap.value = 12
-            const totalGap = gap.value * Math.floor(visibleSlots.value)
-            cardWidth.value = Math.floor((inner - totalGap) / visibleSlots.value)
-            cardWidth.value = Math.max(Math.min(cardWidth.value, 420), 280)
-            cardHeight.value = 200
-        } else if (inner < 768) {
-            visibleSlots.value = 1.6
-            gap.value = 16
-            const totalGap = gap.value * Math.floor(visibleSlots.value)
-            cardWidth.value = Math.floor((inner - totalGap) / visibleSlots.value)
-            cardWidth.value = Math.max(Math.min(cardWidth.value, 480), 300)
-            cardHeight.value = 230
-        } else {
-            visibleSlots.value = 3
-            gap.value = 20
-            const totalGap = gap.value * Math.floor(visibleSlots.value)
-            cardWidth.value = Math.floor((inner - totalGap) / visibleSlots.value)
-            cardWidth.value = Math.max(Math.min(cardWidth.value, 520), 320)
-            cardHeight.value = 260
-        }
+        visibleSlots.value = rule.slots
+        gap.value = rule.gap
+        const totalGap = rule.gap * Math.floor(rule.slots)
+        const width = Math.floor((inner - totalGap) / rule.slots)
+        cardWidth.value = Math.max(Math.min(width, rule.maxW), rule.minW)
+        cardHeight.value = rule.height
 
         if (currentIndex.value > maxIndex.value) currentIndex.value = maxIndex.value
     })
 }
 
-const loadCommentsFromSheet = async () => {
-    try {
-        const response = await fetch(SHEET_CSV_URL, { cache: 'no-store' })
-        if (!response.ok) throw new Error(`Google Sheet returned ${response.status}`)
-
-        const sheetComments = parseSheetComments(await response.text())
-        if (!sheetComments.length) return
-
-        comments.value = sheetComments
-        currentIndex.value = 0
-        recalc()
-    } catch (error) {
-        console.warn('Could not load testimonials from Google Sheets:', error)
-    }
-}
-
 onMounted(() => {
     recalc()
-    loadCommentsFromSheet()
+    load().then(() => {
+        currentIndex.value = 0
+        recalc()
+    })
     ro = new ResizeObserver(recalc)
     if (viewportEl.value) ro.observe(viewportEl.value)
     window.addEventListener('orientationchange', recalc)
@@ -283,6 +97,7 @@ onUnmounted(() => {
     window.removeEventListener('keydown', onKeydown)
 })
 
+/* ---------- Keyboard & touch navigation ---------- */
 function onKeydown(e) {
     if (!wrapEl.value) return
     const rect = wrapEl.value.getBoundingClientRect()
@@ -304,7 +119,7 @@ function onTouchEnd() {
 }
 
 const starsFor = (n) => {
-    const r = clampInt(n)
+    const r = clampRating(n)
     return Array.from({ length: 5 }, (_, i) => i < r)
 }
 
@@ -315,7 +130,7 @@ const trailingSpacerPx = computed(() =>
 
 <template>
     <section class="p-8">
-        <div ref="wrapEl" class="relative max-w-9xl mx-auto" aria-label="Client testimonials carousel">
+        <div ref="wrapEl" class="relative mx-auto" aria-label="Client testimonials carousel">
             <div ref="viewportEl" class="rounded-xl overflow-x-hidden overflow-y-visible h-80 flex items-center"
                 @touchstart.passive="onTouchStart" @touchmove.passive="onTouchMove" @touchend.passive="onTouchEnd">
                 <div v-if="!itemCount" class="text-sm text-gray-500 px-4">
@@ -324,7 +139,7 @@ const trailingSpacerPx = computed(() =>
 
                 <div v-else class="flex transition-transform duration-300 ease-in-out w-max"
                     :style="{ transform: `translateX(-${currentIndex * (cardWidth + gap)}px)`, gap: `${gap}px` }">
-                    <div v-for="(comment, index) in comments" :key="comment.id ?? index"
+                    <article v-for="(comment, index) in comments" :key="comment.id ?? index"
                         class="rounded-xl p-4 sm:p-6 text-white flex flex-col shadow-lg bg-middle-gradient relative overflow-y-visible"
                         :style="{
                             flex: `0 0 ${cardWidth}px`,
@@ -363,7 +178,7 @@ const trailingSpacerPx = computed(() =>
                         </div>
 
                         <div class="absolute bottom-0 left-1/4 -translate-x-1/2 translate-y-1/2 bg-white rounded-full px-3 sm:px-4 py-0.5 sm:py-1 shadow-md flex items-center gap-1 border border-gray-200 z-10"
-                            :aria-label="`Rating ${clampInt(comment?.rating)} out of 5`">
+                            :aria-label="`Rating ${clampRating(comment?.rating)} out of 5`">
                             <svg v-for="(filled, i) in starsFor(comment?.rating)" :key="i"
                                 class="w-4 h-4 sm:w-5 sm:h-5 shrink-0" viewBox="0 0 24 24" aria-hidden="true">
                                 <path
@@ -372,7 +187,7 @@ const trailingSpacerPx = computed(() =>
                                     d="M12 17.27l-5.18 3.04 1.4-5.98L3 9.76l6.09-.52L12 3.5l2.91 5.74 6.09.52-5.22 4.57 1.4 5.98z" />
                             </svg>
                         </div>
-                    </div>
+                    </article>
 
                     <div :style="{ flex: `0 0 ${trailingSpacerPx}px` }"></div>
                 </div>

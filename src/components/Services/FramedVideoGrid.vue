@@ -40,9 +40,7 @@ defineProps({
                          lg:h-[clamp(220px,46svh,330px)]
                          rounded-[18px] overflow-hidden">
                   <video :src="src" class="h-full w-full object-cover" playsinline autoplay muted loop
-                    preload="metadata">
-                    <source :src="src" type="video/mp4" />
-                  </video>
+                    preload="metadata" aria-label="Portfolio video"></video>
                 </div>
               </div>
 

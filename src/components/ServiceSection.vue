@@ -1,11 +1,13 @@
 <script setup>
-import { ref, computed, defineAsyncComponent, defineComponent, nextTick, onErrorCaptured, h } from 'vue'
+import { ref, computed, nextTick } from 'vue'
 import { useI18n } from 'vue-i18n'
 import SlideBase from './Services/SlideBase.vue'
+import { ErrorBoundary, loadSlide } from './Services/slideStates'
+import bgUrl from '../assets/Backgrounds/3.jpeg'
 
 const { t, tm } = useI18n()
-const BG_URL = new URL('../assets/Backgrounds/3.jpeg', import.meta.url).href
 
+/* Tab pill styling */
 const btnBase =
     "relative shrink-0 lg:shrink w-auto lg:w-full rounded-full px-4 py-2.5 lg:py-3 " +
     "text-[clamp(12px,2.4vw,15px)] lg:text-[15px] font-medium tracking-tight " +
@@ -23,65 +25,17 @@ const btnActive =
     "before:bg-[radial-gradient(120%_180%_at_10%_-20%,rgba(183,110,250,.25),rgba(255,255,255,0))] " +
     "hover:before:opacity-100"
 
-const LoadingView = defineComponent({
-    name: 'ServicesLoadingView',
-    setup() {
-        const { t } = useI18n()
-        return () => h('div', { class: 'h-full grid place-items-center text-white/80 text-sm md:text-base' }, t('services.loading'))
-    },
-})
-const ErrorView = defineComponent({
-    name: 'ServicesErrorView',
-    props: { error: { type: Object, default: null } },
-    setup(props) {
-        const { t } = useI18n()
-        return () =>
-            h('div', { class: 'h-full grid place-items-center text-red-300 text-sm md:text-base px-4 text-center' }, [
-                h('div', [
-                    h('p', { class: 'font-semibold' }, t('services.errorTitle')),
-                    h('p', { class: 'opacity-80 mt-1' }, t('services.errorHint')),
-                    props.error?.message ? h('pre', { class: 'opacity-60 mt-2 text-xs' }, props.error.message) : null,
-                ]),
-            ])
-    },
-})
-const ErrorBoundary = defineComponent({
-    name: 'ErrorBoundary',
-    setup(_, { slots }) {
-        const err = ref(null)
-        const { t } = useI18n()
-        onErrorCaptured((error) => {
-            err.value = error
-            return false
-        })
-        return () => {
-            if (err.value) {
-                return h('div', { class: 'h-full grid place-items-center text-red-300 text-sm md:text-base px-4 text-center' }, [
-                    h('div', [
-                        h('p', { class: 'font-semibold' }, t('services.crashedTitle')),
-                        h('p', { class: 'opacity-80 mt-1' }, t('services.crashedHint')),
-                    ]),
-                ])
-            }
-            return slots.default?.()
-        }
-    },
-})
-const load = (fn) => defineAsyncComponent({ loader: fn, loadingComponent: LoadingView, errorComponent: ErrorView, delay: 150, timeout: 30000 })
+// Lazily load every Slide*.vue in ./Services, keyed by component name.
+// SlideBase is the static layout wrapper, not a slide — excluded from the glob.
+const slideModules = import.meta.glob(['./Services/Slide*.vue', '!./Services/SlideBase.vue'])
+const componentsMap = Object.fromEntries(
+    Object.entries(slideModules).map(([path, loader]) => {
+        const name = path.match(/(Slide\w+)\.vue$/)[1]
+        return [name, loadSlide(loader)]
+    })
+)
 
-const componentsMap = {
-    SlideSocialMedia: load(() => import('./Services/SlideSocialMedia.vue')),
-    SlideContentCreation: load(() => import('./Services/SlideContentCreation.vue')),
-    SlideMarketingCampaign: load(() => import('./Services/SlideMarketingCampaign.vue')),
-    SlideBranding: load(() => import('./Services/SlideBranding.vue')),
-    SlidePhotography: load(() => import('./Services/SlidePhotography.vue')),
-    SlideVideography: load(() => import('./Services/SlideVideography.vue')),
-    SlideGraphicDesign: load(() => import('./Services/SlideGraphicDesign.vue')),
-    SlideMotionGraphic: load(() => import('./Services/SlideMotionGraphic.vue')),
-    SlideLogoDesign: load(() => import('./Services/SlideLogoDesign.vue')),
-    SlideWebsiteDesign: load(() => import('./Services/SlideWebsiteDesign.vue')),
-}
-
+// Which slide component belongs to which tab (tab copy lives in i18n messages).
 const tabComponentByKey = {
     social: 'SlideSocialMedia',
     content: 'SlideContentCreation',
@@ -106,6 +60,7 @@ const navTrack = ref(null)
 function setActive(index) {
     if (index === activeIndex.value) return
     activeIndex.value = index
+    // Keep the newly active tab visible inside the horizontally scrolling track.
     nextTick(() => {
         const track = navTrack.value
         const btn = track?.querySelector(`[data-index="${index}"]`)
@@ -123,8 +78,8 @@ function setActive(index) {
     <section class="relative w-full max-w-full isolate overflow-x-hidden
            h-[408px] md:h-[598.03px] lg:h-screen" :aria-label="t('services.ariaLabel')">
         <div class="absolute inset-0 -z-10">
-            <img :src="BG_URL" alt=""
-                class="h-full w-full object-cover object-center select-none pointer-events-none" />
+            <img :src="bgUrl" alt=""
+                class="h-full w-full object-cover object-center select-none pointer-events-none" loading="lazy" decoding="async" />
             <div class="absolute inset-0 bg-black/25"></div>
         </div>
 

@@ -1,20 +1,20 @@
-<!-- src/App.vue -->
 <script setup>
 import { computed } from 'vue'
 import Header from './components/Header.vue'
 import Hero from './components/Hero.vue'
-import Partners from './components/Partners.vue'
-import OurTeam from './components/OurTeam.vue'
-import ServiceSection from './components/ServiceSection.vue'
-import Comment from './components/Comments.vue'
-import Footer from './components/Footer.vue'
 import AboutUs from './components/AboutUs.vue'
-import { useScrollDirection } from './composables/useScrollDirection'
+import Partners from './components/Partners.vue'
+import Comments from './components/Comments.vue'
 import HowItWorks from './components/HowItWorks.vue'
 import CollaborationStep from './components/CollaborationStep.vue'
 import CollaborationStep2 from './components/CollaborationStep2.vue'
+import OurTeam from './components/OurTeam.vue'
 import MeetOurFounder from './components/MeetOurFounder.vue'
+import ServiceSection from './components/ServiceSection.vue'
+import Footer from './components/Footer.vue'
+import { useScrollDirection } from './composables/useScrollDirection'
 
+// Hide the sticky header while scrolling down, show it when scrolling up.
 const { scrollingUp, atTop } = useScrollDirection({ threshold: 8, topOffset: 48 })
 const showNav = computed(() => atTop.value || scrollingUp.value)
 </script>
@@ -40,7 +40,7 @@ const showNav = computed(() => atTop.value || scrollingUp.value)
       </section>
 
       <section id="comments" class="section bg-gray-300">
-        <Comment />
+        <Comments />
       </section>
 
       <section id="howitworks" class="section bg-var-purple-gradient">
@@ -73,15 +73,3 @@ const showNav = computed(() => atTop.value || scrollingUp.value)
     </main>
   </div>
 </template>
-
-<style>
-html {
-  scroll-behavior: smooth;
-}
-
-/* Make anchor jumps land below the sticky header (h-16 ~= 64px). */
-.section,
-:target {
-  scroll-margin-top: 64px;
-}
-</style>

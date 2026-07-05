@@ -1,20 +1,20 @@
 <template>
     <section
-        class="w-full mx-auto px-6 py-8 lg:p-16 grid gap-4 md:grid-cols-10 lg:grid-cols-10 items-center bg-var-8 bg-full">
+        class="w-full mx-auto px-6 py-8 lg:p-16 grid gap-4 md:grid-cols-10 lg:grid-cols-10 items-center bg-var-8">
         <!-- Left text -->
         <div v-reveal class="text-center leading-tight px-8 pb-5 md:pb-0 md:col-span-4 lg:text-left md:text-left lg:pb-4">
-            <h1 class="font-uppercase-title mb-0 text-2xl sm:text-3xl md:text-5xl text-[#371055] font-normal">
+            <h2 class="mb-0 text-2xl sm:text-3xl md:text-5xl text-[#371055] font-normal">
                 {{ t('partners.titleLine1') }}
-            </h1>
-            <h1 class="font-uppercase-title mb-0 text-2xl sm:text-3xl md:text-5xl text-[#371055] font-normal uppercase">
+            </h2>
+            <h2 class="mb-0 text-2xl sm:text-3xl md:text-5xl text-[#371055] font-normal uppercase">
                 {{ t('partners.titleLine2Prefix') }} <span class="font-bold">{{ t('partners.titleLine2Highlight') }}</span>
-            </h1>
-            <h1 class="font-uppercase-title mb-0 text-2xl sm:text-3xl md:text-5xl text-[#371055] font-bold">
+            </h2>
+            <h2 class="mb-0 text-2xl sm:text-3xl md:text-5xl text-[#371055] font-bold">
                 {{ t('partners.titleLine3') }}
-            </h1>
-            <h1 class="font-uppercase-title mb-0 text-2xl sm:text-3xl md:text-5xl text-[#371055] font-bold">
+            </h2>
+            <h2 class="mb-0 text-2xl sm:text-3xl md:text-5xl text-[#371055] font-bold">
                 {{ t('partners.titleLine4') }}
-            </h1>
+            </h2>
         </div>
 
         <!-- Right logos grid -->
@@ -36,13 +36,11 @@
 
 <script setup>
 import { useI18n } from 'vue-i18n'
+import { allLogos } from '../utils/partnerLogos'
 
 const { t } = useI18n()
 
-// case-sensitive and relative to this file:
-const files = import.meta.glob('../assets/Logos/*.png', { eager: true, as: 'url' })
-
-// Manual order by logo base filename (without extension).
+// Manual display order by logo base filename (without extension).
 // Unlisted logos are appended in alphabetical order.
 const preferredOrder = [
     'Qubu Resort',
@@ -91,13 +89,12 @@ const collator = new Intl.Collator('en', { sensitivity: 'base' })
 const orderRank = new Map(preferredOrder.map((name, index) => [normalize(name), index]))
 const LOGO_LIMIT = 40
 
-const logos = Object.entries(files)
-    .map(([path, url]) => {
-        const filename = (path.split('/').pop() || '').trim()
-        const base = normalize(filename.replace(/\.[^.]+$/, ''))
-        const alt = base.replace(/[-_]+/g, ' ').replace(/\b\w/g, c => c.toUpperCase())
-        return { url, alt, sortKey: base }
-    })
+const logos = allLogos
+    .map(({ url, name }) => ({
+        url,
+        alt: name.replace(/[-_]+/g, ' ').replace(/\b\w/g, c => c.toUpperCase()),
+        sortKey: normalize(name),
+    }))
     .sort((a, b) => {
         const aRank = orderRank.get(a.sortKey)
         const bRank = orderRank.get(b.sortKey)

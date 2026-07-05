@@ -3,21 +3,22 @@
         <div class="max-w-screen-xl mx-auto px-6 sm:px-10 lg:px-20 pb-6 sm:pb-10 lg:pb-16">
             <ul
                 class="mt-8 sm:mt-10 grid gap-3 sm:gap-6 md:gap-6 lg:gap-7 grid-cols-4 md:grid-cols-4 lg:grid-cols-6 auto-rows-fr">
-                <li v-for="(card, i) in cards" :key="i" class="relative h-full md:col-span-2 lg:col-span-2"
+                <li v-for="(card, i) in cards" :key="i" v-reveal="{ delay: (i % 3) * 110 }"
+                    class="relative h-full md:col-span-2 lg:col-span-2"
                     :class="[i === cards.length - 1 ? 'col-span-2 col-start-2' : 'col-span-2', pos[i]]">
                     <article class="bg-middle-gradient text-white rounded-2xl ring-1 ring-black/10
                    p-4 sm:p-7 lg:p-8 pt-10 sm:pt-12 h-full flex flex-col
                    shadow-[0_34px_88px_-22px_rgba(43,17,84,0.6),0_20px_40px_-16px_rgba(0,0,0,0.6),0_0_60px_-10px_rgba(124,61,176,0.45)]
 ">
-                        <div class="absolute -top-5 sm:-top-6 left-1/2 -translate-x-1/2 h-12 w-12 sm:h-18 sm:w-18
+                        <div class="absolute -top-5 sm:-top-6 left-1/2 -translate-x-1/2 h-12 w-12
                      rounded-full bg-white text-darkPurple flex items-center justify-center
                      shadow-lg ring-1 ring-black/10">
-                            <Icon :icon="iconify(card.icon)" class="text-2xl sm:text-4xl" aria-hidden="true" />
+                            <Icon :icon="card.icon" class="text-2xl sm:text-4xl" aria-hidden="true" />
                         </div>
 
-                        <h1 class="font-bold text-base sm:text-xl tracking-wide text-center my-2 sm:my-6 lg:my-6">
+                        <h3 class="font-bold text-base sm:text-xl tracking-wide text-center my-2 sm:my-6 lg:my-6">
                             {{ card.title }}
-                        </h1>
+                        </h3>
 
                         <p v-if="card.intro"
                             class="font-semibold text-white/90 mt-2 sm:mt-3 leading-relaxed text-xs sm:text-base">
@@ -57,11 +58,20 @@ import { useI18n } from 'vue-i18n'
 
 const { tm } = useI18n()
 
-const cardIcons = ['diversity_2', 'description', 'task_alt', 'payments', 'movie_edit']
+// One Iconify icon per card, in display order.
+const CARD_ICONS = [
+    'material-symbols:diversity-2-rounded',
+    'material-symbols:description-rounded',
+    'material-symbols:task-alt-rounded',
+    'material-symbols:payments-rounded',
+    'lucide:clapperboard',
+]
+
 const cards = computed(() =>
-    tm('collaborationStep2.cards').map((card, index) => ({ ...card, icon: cardIcons[index] }))
+    tm('collaborationStep2.cards').map((card, index) => ({ ...card, icon: CARD_ICONS[index] }))
 )
 
+// Grid column starts that produce the staggered 2-3 card arrangement.
 const pos = [
     'md:col-start-1 lg:col-start-1',
     'md:col-start-3 lg:col-start-3',
@@ -69,17 +79,4 @@ const pos = [
     'md:col-start-3 lg:col-start-2',
     'md:col-start-2 lg:col-start-4',
 ]
-
-const ICONS = {
-    diversity_2: 'material-symbols:diversity-2-rounded',
-    description: 'material-symbols:description-rounded',
-    task_alt: 'material-symbols:task-alt-rounded',
-    payments: 'material-symbols:payments-rounded',
-    movie_edit: 'lucide:clapperboard',
-}
-
-const iconify = (name) =>
-    String(name).includes(':')
-        ? String(name)
-        : (ICONS[name] ?? `material-symbols:${String(name).replace(/_/g, '-')}-rounded`)
 </script>

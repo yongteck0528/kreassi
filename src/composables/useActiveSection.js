@@ -3,6 +3,7 @@ import { ref, onMounted, onBeforeUnmount } from 'vue'
 export function useActiveSection(ids, { rootMargin = '-45% 0px -45% 0px', threshold = [0, 0.25, 0.5, 0.75, 1] } = {}) {
   const active = ref(ids[0] || null)
   let obs
+  let onHash
 
   onMounted(() => {
     const sections = ids
@@ -30,20 +31,16 @@ export function useActiveSection(ids, { rootMargin = '-45% 0px -45% 0px', thresh
     sections.forEach(el => obs.observe(el))
 
     // Keep in sync if user jumps via hash
-    const onHash = () => {
+    onHash = () => {
       const id = (location.hash || '#').slice(1) || ids[0]
       if (ids.includes(id)) active.value = id
     }
     window.addEventListener('hashchange', onHash, { passive: true })
-    // store to remove later
-    obs._onHash = onHash
   })
 
   onBeforeUnmount(() => {
-    if (obs) {
-      obs.disconnect()
-      window.removeEventListener('hashchange', obs._onHash || (()=>{}))
-    }
+    if (obs) obs.disconnect()
+    if (onHash) window.removeEventListener('hashchange', onHash)
   })
 
   return { active }
