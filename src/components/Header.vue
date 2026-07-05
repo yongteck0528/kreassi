@@ -40,7 +40,9 @@ const onNavClick = () => { mobileMenuOpen.value = false }
 
                 <!-- Logo -->
                 <div class="flex-shrink-0">
-                    <img :src="logo" alt="Kreassi Team logo" class="h-10 w-auto" />
+                    <a href="#home" @click="onNavClick" aria-label="Kreassi Team Home">
+                        <img :src="logo" alt="Kreassi Team logo" class="h-10 w-auto" />
+                    </a>
                 </div>
 
                 <!-- Desktop Navigation -->
