@@ -41,6 +41,11 @@
     Cache-Control = "public, max-age=0, must-revalidate"
 
 [[headers]]
+  for = "/id/*"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+[[headers]]
   for = "/blog"
   [headers.values]
     Cache-Control = "public, max-age=0, must-revalidate"
