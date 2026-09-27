@@ -25,6 +25,11 @@ const loadRole = async () => {
         .eq('user_id', state.session.user.id)
         .maybeSingle()
     state.role = error ? null : data?.role ?? null
+    // Mark this browser as the team's so the public site's analytics skip it
+    // (read by src/analytics/pulse.js; same origin, so same localStorage).
+    if (state.role) {
+        try { localStorage.setItem('kreassi-admin', '1') } catch { /* storage blocked */ }
+    }
 }
 
 const init = () => {

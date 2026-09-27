@@ -5,6 +5,10 @@
   command = "npm run build"
   publish = "dist"
 
+[functions]
+  # Server-side code (analytics ingest). Secrets come from Netlify environment variables.
+  directory = "netlify/functions"
+
 [build.environment]
   # Vite 7 requires Node >= 20.19; pin so Netlify image changes can't break builds.
   NODE_VERSION = "22"

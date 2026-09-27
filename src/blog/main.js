@@ -9,3 +9,6 @@ const app = createApp(Blog)
 app.use(i18n)
 app.directive('reveal', reveal)
 app.mount('#blog-app')
+// Analytics load after the page is up, as their own small chunk: if a blocker
+// stops them, the site itself is unaffected.
+import('../analytics/pulse').then(({ initAnalytics }) => initAnalytics()).catch(() => {})

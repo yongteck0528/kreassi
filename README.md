@@ -31,6 +31,8 @@ src/
   utils/                   CSV parser, partner logo resolver, asset glob helpers
   assets/                  Images, videos, logos (managed by the design team)
   admin/                   Admin area app (/admin): login, dashboard, blog, team
+  analytics/pulse.js       Cookieless visitor analytics for the public site (loaded after the page)
+netlify/functions/         Server code on Netlify (pulse.mjs = analytics ingest)
 admin/index.html           Admin entry — built separately (vite.admin.config.js) so public pages never load admin code
 supabase/                  Database migrations (run in Supabase → SQL Editor)
 ```
@@ -77,3 +79,17 @@ Built as a **separate** Vite build, so nothing in it ships to public visitors.
   Supabase → SQL Editor. Access rules (row-level security) are in the same files.
 - Make someone the owner: create the user in Supabase (Authentication → Users),
   then run `supabase/bootstrap_owner.sql` with their email.
+
+### Analytics
+
+First-party and cookieless: no cookies, no IP addresses stored, visitors counted
+once per day with an anonymous daily-rotating id.
+
+- The public site sends small batches to `/.netlify/functions/pulse` (only on
+  kreassiteam.com — never from local dev, previews, bots, or a browser that has
+  signed into /admin).
+- The function needs `SUPABASE_SERVICE_ROLE_KEY` in Netlify environment
+  variables (Functions scope). Database: `supabase/migrations/0002_analytics.sql`.
+- The owner sees everything on /admin → Dashboard, in Pontianak time.
+- Tip: tag links you share with `?utm_campaign=name` (e.g. an Instagram bio or ad)
+  and they show up under **Campaigns**, including how many led to contact clicks.
