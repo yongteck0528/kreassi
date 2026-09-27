@@ -32,7 +32,7 @@ export async function fetchDashboard({ from, to }) {
 
 export const dashboardErrorMessage = (error) => {
     if (error?.code === 'PGRST202') return 'Analytics isn’t set up in the database yet. Run supabase/migrations/0002_analytics.sql in the Supabase SQL Editor.'
-    if (error?.code === '42501') return 'Only the site owner can view analytics.'
+    if (error?.code === '42501') return 'Only admins can view analytics.'
     if (/fetch|network/i.test(error?.message ?? '')) return 'Could not reach the server. Check your connection and try again.'
     return 'Could not load analytics. Please try again.'
 }

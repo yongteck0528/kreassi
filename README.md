@@ -69,7 +69,8 @@ to https://kreassiteam.com**.
 
 ## Admin area (/admin)
 
-Login-protected area for the owner and writers (Supabase auth + database).
+Login-protected area for the team (Supabase auth + database). One role: every
+admin can use everything — dashboard, blog, categories and team.
 Built as a **separate** Vite build, so nothing in it ships to public visitors.
 
 - Public Supabase settings (URL + anon key) → `src/config/supabase.js`.
@@ -77,8 +78,11 @@ Built as a **separate** Vite build, so nothing in it ships to public visitors.
   environment variables.
 - Database changes live in `supabase/migrations/`, applied in order via
   Supabase → SQL Editor. Access rules (row-level security) are in the same files.
-- Make someone the owner: create the user in Supabase (Authentication → Users),
-  then run `supabase/bootstrap_owner.sql` with their email.
+- Add or remove team members from /admin → Team (a temporary password is shown
+  once to pass on — there is no email sender yet). This runs through
+  `netlify/functions/admin-team.mjs`, which needs `SUPABASE_SERVICE_ROLE_KEY`.
+- Recovery / first admin only: create the user in Supabase (Authentication →
+  Users), then run `supabase/bootstrap_owner.sql` with their email.
 
 ### Analytics
 
@@ -90,6 +94,20 @@ once per day with an anonymous daily-rotating id.
   signed into /admin).
 - The function needs `SUPABASE_SERVICE_ROLE_KEY` in Netlify environment
   variables (Functions scope). Database: `supabase/migrations/0002_analytics.sql`.
-- The owner sees everything on /admin → Dashboard, in Pontianak time.
+- Admins see everything on /admin → Dashboard, in Pontianak time.
 - Tip: tag links you share with `?utm_campaign=name` (e.g. an Instagram bio or ad)
   and they show up under **Campaigns**, including how many led to contact clicks.
+
+### Blog
+
+Written in /admin → Blog (knowledge-base style: post list on the left, editor
+on the right). Content is stored as editor JSON in Supabase `posts`; images go
+to the `blog-images` storage bucket (resized to WebP in the browser first).
+
+- **Draft** — autosaves as you type. **Publish** makes it live.
+- **Editing a published post** saves into `pending`: the live version doesn't
+  change until **Update post** (or **Discard changes**).
+- Two people editing the same post: the second save is refused with a
+  "changed somewhere else" notice instead of silently overwriting.
+- Database: `supabase/migrations/0004_blog.sql` (categories, posts, storage).
+  The public can only read published posts, and never `pending` edits.

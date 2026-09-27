@@ -26,7 +26,7 @@ const submit = async () => {
 </script>
 
 <template>
-    <AuthShell title="Reset password" subtitle="We'll email you a link to set a new password.">
+    <AuthShell title="Reset password" subtitle="Ask someone on the team to reset it for you (Admin → Team → Reset password). The email option below may not reach you yet.">
         <div v-if="sent" class="space-y-4">
             <p class="rounded-lg bg-green-50 px-3 py-2 text-sm text-green-800">
                 If that email belongs to an admin account, a reset link is on its way. Check your inbox (and spam).

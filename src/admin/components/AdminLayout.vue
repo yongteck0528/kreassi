@@ -1,22 +1,23 @@
 <script setup>
-import { computed, ref, watch } from 'vue'
+import { ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { Icon } from '@iconify/vue'
 import { useAuth } from '../composables/useAuth'
 import logo from '../../assets/Logos/Kreassi/White - Kreassi Logo.png'
 
-const { state, email, isOwner, signOut } = useAuth()
+const { email, signOut } = useAuth()
 const route = useRoute()
 const router = useRouter()
 
 const drawerOpen = ref(false)
 watch(() => route.fullPath, () => { drawerOpen.value = false })
 
-const nav = computed(() => [
-    { to: { name: 'dashboard' }, label: 'Dashboard', icon: 'mdi:chart-box-outline', show: isOwner.value },
-    { to: { name: 'posts' }, label: 'Blog posts', icon: 'mdi:file-document-edit-outline', show: true },
-    { to: { name: 'team' }, label: 'Team', icon: 'mdi:account-group-outline', show: isOwner.value },
-].filter((item) => item.show))
+const nav = [
+    { to: { name: 'dashboard' }, label: 'Dashboard', icon: 'mdi:chart-box-outline' },
+    { to: { name: 'posts' }, label: 'Blog', icon: 'mdi:file-document-edit-outline' },
+    { to: { name: 'categories' }, label: 'Categories', icon: 'mdi:shape-outline' },
+    { to: { name: 'team' }, label: 'Team', icon: 'mdi:account-group-outline' },
+]
 
 const onSignOut = async () => {
     await signOut()
@@ -61,10 +62,7 @@ const onSignOut = async () => {
 
             <div class="border-t border-white/10 p-4">
                 <p class="truncate text-sm" :title="email">{{ email }}</p>
-                <div class="mt-1 flex items-center justify-between">
-                    <span class="rounded-full bg-white/15 px-2 py-0.5 text-[11px] uppercase tracking-wider">{{ state.role }}</span>
-                    <router-link :to="{ name: 'set-password' }" class="text-xs text-white/60 hover:text-white">Change password</router-link>
-                </div>
+                <router-link :to="{ name: 'set-password' }" class="mt-1 inline-block text-xs text-white/60 hover:text-white">Change password</router-link>
                 <button type="button"
                     class="mt-3 flex w-full items-center justify-center gap-2 rounded-lg border border-white/20 px-3 py-2 text-sm transition-colors hover:bg-white/10"
                     @click="onSignOut">
@@ -75,7 +73,9 @@ const onSignOut = async () => {
         </aside>
 
         <main class="min-w-0 flex-1">
-            <div class="mx-auto max-w-6xl px-4 py-6 sm:px-6 lg:px-10 lg:py-10">
+            <!-- The blog is a full-height workspace; other pages get the standard frame. -->
+            <router-view v-if="route.meta.fullWidth" />
+            <div v-else class="mx-auto max-w-6xl px-4 py-6 sm:px-6 lg:px-10 lg:py-10">
                 <h1 class="text-2xl font-bold text-darkPurple">{{ route.meta.title }}</h1>
                 <div class="mt-6">
                     <router-view />

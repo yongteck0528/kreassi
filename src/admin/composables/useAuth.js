@@ -4,14 +4,14 @@ import { supabase } from '../lib/supabase'
 /**
  * Admin auth state, shared app-wide (module-level singleton).
  *
- * `role` comes from public.admins, which is readable only by the user it
- * describes (and the owner). A signed-in user without a row there has no
- * access — the database enforces the same rule on every table.
+ * `role` comes from public.admins (one role: 'admin'). A signed-in user
+ * without a row there has no access — the database enforces the same rule on
+ * every table.
  */
 const state = reactive({
     ready: false,
     session: null,
-    role: null,          // 'owner' | 'writer' | null
+    role: null,          // 'admin' (or null: no access)
     recovering: false,   // arrived via password-reset / invite link
 })
 
@@ -85,7 +85,6 @@ export function useAuth() {
         requestPasswordReset,
         setPassword,
         email: computed(() => state.session?.user?.email ?? ''),
-        isOwner: computed(() => state.role === 'owner'),
-        isAdmin: computed(() => state.role === 'owner' || state.role === 'writer'),
+        isAdmin: computed(() => !!state.role),
     }
 }
