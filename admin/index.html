@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kreassi Admin</title>
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="theme-color" content="#371055" />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <!-- Keep the auth redirect hash (e.g. an expired-link error) before the auth client tidies the URL. -->
+    <script>window.__authHash = location.hash</script>
+  </head>
+  <body class="bg-gray-50">
+    <div id="admin-app"></div>
+    <noscript>The Kreassi admin needs JavaScript enabled.</noscript>
+    <script type="module" src="/src/admin/main.js"></script>
+  </body>
+</html>

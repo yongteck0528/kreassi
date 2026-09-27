@@ -15,6 +15,12 @@
   to = "/blog.html"
   status = 200
 
+# Admin app (client-side routes like /admin/posts). Must come before the SPA catch-all.
+[[redirects]]
+  from = "/admin/*"
+  to = "/admin/index.html"
+  status = 200
+
 # SPA fallback (public/_redirects does the same; this is the canonical copy).
 [[redirects]]
   from = "/*"
@@ -65,3 +71,13 @@
   for = "/site.webmanifest"
   [headers.values]
     Cache-Control = "public, max-age=86400"
+
+# --- Admin area ---
+# Never indexed, never framed by other sites, never cached (always the latest build).
+[[headers]]
+  for = "/admin/*"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"
+    X-Frame-Options = "DENY"
+    Referrer-Policy = "same-origin"
+    Cache-Control = "no-store"

@@ -7,6 +7,7 @@ Single-page marketing site for [Kreassi Team](https://kreassiteam.com), built wi
 ```bash
 npm install       # install dependencies
 npm run dev       # start dev server (http://localhost:5173)
+npm run dev:admin # admin area dev server (http://localhost:5174/admin/)
 npm run build     # production build → dist/
 npm run preview   # serve the production build locally
 ```
@@ -29,6 +30,9 @@ src/
   directives/reveal.js     v-reveal scroll-into-view animation
   utils/                   CSV parser, partner logo resolver, asset glob helpers
   assets/                  Images, videos, logos (managed by the design team)
+  admin/                   Admin area app (/admin): login, dashboard, blog, team
+admin/index.html           Admin entry — built separately (vite.admin.config.js) so public pages never load admin code
+supabase/                  Database migrations (run in Supabase → SQL Editor)
 ```
 
 ★ = the files you'll edit most often.
@@ -60,3 +64,16 @@ to https://kreassiteam.com**.
   the site and confirm the page title shows the newest version.
 - SEO: update the canonical URL in `index.html`, `public/robots.txt`, and
   `public/sitemap.xml` if the domain ever changes.
+
+## Admin area (/admin)
+
+Login-protected area for the owner and writers (Supabase auth + database).
+Built as a **separate** Vite build, so nothing in it ships to public visitors.
+
+- Public Supabase settings (URL + anon key) → `src/config/supabase.js`.
+  The **service_role / secret key never goes in the repo** — only in Netlify
+  environment variables.
+- Database changes live in `supabase/migrations/`, applied in order via
+  Supabase → SQL Editor. Access rules (row-level security) are in the same files.
+- Make someone the owner: create the user in Supabase (Authentication → Users),
+  then run `supabase/bootstrap_owner.sql` with their email.

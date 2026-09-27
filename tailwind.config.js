@@ -1,6 +1,7 @@
 /** @type {import('tailwindcss').Config} */
 export default {
-  content: ['./index.html', './src/**/*.{vue,js,ts}'],
+  // Public site only — the admin area has its own build and config (tailwind.admin.config.js).
+  content: ['./index.html', './src/*.{vue,js,ts}', './src/!(admin)/**/*.{vue,js,ts}'],
   theme: {
     extend: {
       colors: {
