@@ -178,7 +178,7 @@ const trailingSpacerPx = computed(() =>
                         </div>
 
                         <div class="absolute bottom-0 left-1/4 -translate-x-1/2 translate-y-1/2 bg-white rounded-full px-3 sm:px-4 py-0.5 sm:py-1 shadow-md flex items-center gap-1 border border-gray-200 z-10"
-                            :aria-label="`Rating ${clampRating(comment?.rating)} out of 5`">
+                            role="img" :aria-label="`Rating ${clampRating(comment?.rating)} out of 5`">
                             <svg v-for="(filled, i) in starsFor(comment?.rating)" :key="i"
                                 class="w-4 h-4 sm:w-5 sm:h-5 shrink-0" viewBox="0 0 24 24" aria-hidden="true">
                                 <path

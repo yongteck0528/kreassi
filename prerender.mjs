@@ -65,6 +65,21 @@ const render = async (browser, route) => {
     })
   })
 
+  // Chrome releases a pending lazy-image load as soon as another <img> asks for
+  // the same URL — and Vue re-creates every image when it mounts. So lazy
+  // images left in the snapshot would all download immediately (~1.4 MB extra
+  // on first load). Below the first screen, park the real URL in data-src
+  // behind a transparent placeholder; the live page renders the real images
+  // exactly as before, and crawlers still get the alt text.
+  await page.evaluate((viewportHeight) => {
+    const blank = 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=='
+    document.querySelectorAll('#app img[loading="lazy"]').forEach((img) => {
+      if (img.getBoundingClientRect().top < viewportHeight) return
+      img.setAttribute('data-src', img.getAttribute('src'))
+      img.setAttribute('src', blank)
+    })
+  }, 1024)
+
   const html = await page.content()
   await context.close()
   return html

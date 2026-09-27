@@ -19,7 +19,7 @@ const features = computed(() =>
         <div class="grid grid-cols-4 gap-x-3 sm:gap-x-4 lg:gap-x-6 items-center">
             <div class="col-span-1">
                 <h2 v-reveal class="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-darkPurple leading-none md:leading-tight">
-                    {{ t('aboutUs.titleLine1') }}<br />{{ t('aboutUs.titleLine2') }}
+                    {{ t('aboutUs.titleLine1') }} <br />{{ t('aboutUs.titleLine2') }}
                 </h2>
             </div>
 
