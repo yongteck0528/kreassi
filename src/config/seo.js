@@ -10,7 +10,7 @@
 export const SEO = {
     en: {
         path: '/',
-        title: 'Social Media & Content Agency in Pontianak | Kreassi Team',
+        title: 'Creative and Branding Agency | Kreassi Team',
         description: 'Pontianak-based social media & content agency. We help cafes, F&B and small businesses grow online with content creation, branding, photo, video & web design.',
         ogDescription: 'We help cafes, F&B and small businesses in Pontianak grow online — social media management, content creation, branding, photography, videography & website design.',
         twitterDescription: 'We help cafes, F&B and small businesses in Pontianak grow online — social media, content, branding & design.',
@@ -19,7 +19,7 @@ export const SEO = {
     },
     id: {
         path: '/id/',
-        title: 'Jasa Social Media & Konten di Pontianak | Kreassi Team',
+        title: 'Agensi Kreatif dan Branding | Kreassi Team',
         description: 'Agensi social media & konten di Pontianak. Kami bantu cafe, F&B, dan UMKM berkembang online lewat pembuatan konten, branding, foto, video & desain website.',
         ogDescription: 'Kami bantu cafe, F&B, dan UMKM di Pontianak berkembang online — kelola media sosial, pembuatan konten, branding, fotografi, videografi & desain website.',
         twitterDescription: 'Kami bantu cafe, F&B, dan UMKM di Pontianak berkembang online — social media, konten, branding & desain.',
