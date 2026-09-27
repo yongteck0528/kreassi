@@ -21,7 +21,7 @@ import { mkdirSync, writeFileSync } from 'node:fs'
 import { dirname, resolve } from 'node:path'
 
 const PORT = 4199
-// Blog is intentionally empty + noindex, so it isn't prerendered.
+// Blog pages are already finished HTML (scripts/build-blog.mjs), so they aren't prerendered.
 const ROUTES = [
   { path: '/', out: 'dist/index.html', lang: 'en' },
   { path: '/id/', out: 'dist/id/index.html', lang: 'id' },

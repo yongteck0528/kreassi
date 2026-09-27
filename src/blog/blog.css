@@ -1,0 +1,6 @@
+@import './prose.css';
+
+/* Header link hover — same as the homepage header (src/components/Header.vue). */
+.nav-hover:hover {
+    background-color: rgba(124, 61, 176, 0.2);
+}

@@ -8,7 +8,7 @@ Single-page marketing site for [Kreassi Team](https://kreassiteam.com), built wi
 npm install       # install dependencies
 npm run dev       # start dev server (http://localhost:5173)
 npm run dev:admin # admin area dev server (http://localhost:5174/admin/)
-npm run build     # production build → dist/
+npm run build     # production build → dist/ (reads published blog posts from Supabase)
 npm run preview   # serve the production build locally
 ```
 
@@ -32,7 +32,9 @@ src/
   assets/                  Images, videos, logos (managed by the design team)
   admin/                   Admin area app (/admin): login, dashboard, blog, team
   analytics/pulse.js       Cookieless visitor analytics for the public site (loaded after the page)
-netlify/functions/         Server code on Netlify (pulse.mjs = analytics ingest)
+  blog/                    Public blog: page templates, post renderer, typography (shared with the admin preview)
+scripts/build-blog.mjs     Build step that turns published posts into static pages in dist/blog/
+netlify/functions/         Server code on Netlify (analytics ingest, team management, site rebuilds)
 admin/index.html           Admin entry — built separately (vite.admin.config.js) so public pages never load admin code
 supabase/                  Database migrations (run in Supabase → SQL Editor)
 ```
@@ -59,7 +61,7 @@ The site deploys automatically: **push to `main` → Netlify builds and publishe
 to https://kreassiteam.com**.
 
 - `netlify.toml` defines the build (command, `dist/` publish dir, Node 22) and
-  the SPA redirect. `public/_redirects` is a duplicate of the redirect rule.
+  the redirects. `public/_redirects` duplicates them — keep both in sync.
 - `.github/workflows/ci.yml` runs a build check on every push/PR — a red ❌ on
   GitHub means Netlify's build of that commit will fail too.
 - To verify a deploy: check the Netlify dashboard (Deploys tab), or hard-refresh
@@ -109,5 +111,24 @@ to the `blog-images` storage bucket (resized to WebP in the browser first).
   change until **Update post** (or **Discard changes**).
 - Two people editing the same post: the second save is refused with a
   "changed somewhere else" notice instead of silently overwriting.
-- Database: `supabase/migrations/0004_blog.sql` (categories, posts, storage).
-  The public can only read published posts, and never `pending` edits.
+- Database: `supabase/migrations/0004_blog.sql` (categories, posts, storage) and
+  `0005_blog_public.sql` (old post URLs). The public can only read published
+  posts, and never `pending` edits.
+
+**On the website** (https://kreassiteam.com/blog/): every build reads the
+published posts (`scripts/build-blog.mjs`) and writes finished HTML pages — the
+list at `/blog/`, one page per post at `/blog/<url>/`, a blog 404 page, and the
+blog URLs in `sitemap.xml`. No framework runs on these pages; they share the
+homepage header/footer look (`src/blog/templates.js`).
+
+- **Publish / Update post / Unpublish / Delete** in /admin trigger a Netlify
+  rebuild through `netlify/functions/admin-rebuild.mjs` → live in ~2–3 minutes.
+  Needs `NETLIFY_BUILD_HOOK_URL` (Netlify → Site configuration → Build & deploy
+  → Build hooks) as a Netlify env var, next to `SUPABASE_SERVICE_ROLE_KEY`.
+- If Supabase can't be reached, the build **fails on purpose**, so Netlify keeps
+  the current site (instead of deploying a blog with posts missing).
+- Changing the URL of a published post: the old address redirects (301) to the
+  new one, automatically.
+- The blog list is `noindex` until at least one post is published.
+- Previewing blog pages locally: `npm run build && npm run preview`, then open
+  http://localhost:4173/blog/.

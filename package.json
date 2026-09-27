@@ -6,10 +6,11 @@
   "scripts": {
     "dev": "vite",
     "dev:admin": "vite --config vite.admin.config.js",
-    "build": "vite build && vite build --config vite.admin.config.js && node prerender.mjs",
+    "build": "vite build && vite build --config vite.admin.config.js && node scripts/build-blog.mjs && node prerender.mjs",
     "build:client": "vite build",
     "prerender": "node prerender.mjs",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "blog": "node scripts/build-blog.mjs"
   },
   "dependencies": {
     "@iconify/vue": "^5.0.0",
@@ -20,7 +21,6 @@
     "@tiptap/pm": "^3.31.3",
     "@tiptap/starter-kit": "^3.31.3",
     "@tiptap/vue-3": "^3.31.3",
-    "dompurify": "^3.4.16",
     "vue": "^3.5.21",
     "vue-i18n": "^11.2.8",
     "vue-router": "^4.6.4"

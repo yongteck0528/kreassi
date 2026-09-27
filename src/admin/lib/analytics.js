@@ -56,7 +56,7 @@ export const formatLongDay = (iso) => longDayFormat.format(new Date(`${iso}T00:0
 // ---------------------------------------------------------------------------
 export const CHANNEL_LABELS = { whatsapp: 'WhatsApp', instagram: 'Instagram', email: 'Email', phone: 'Phone' }
 export const LANGUAGE_LABELS = { en: 'English  ( / )', id: 'Indonesian  ( /id/ )', unknown: 'Unknown' }
-export const PAGE_LABELS = { '/': 'Homepage (English)', '/id/': 'Homepage (Indonesian)', '/blog': 'Blog' }
+export const PAGE_LABELS = { '/': 'Homepage (English)', '/id/': 'Homepage (Indonesian)', '/blog': 'Blog (all posts)', '/blog/': 'Blog (all posts)' }
 export const DEVICE_LABELS = { mobile: 'Mobile', desktop: 'Desktop', tablet: 'Tablet', unknown: 'Unknown' }
 
 // Homepage sections in page order (ids from src/App.vue).

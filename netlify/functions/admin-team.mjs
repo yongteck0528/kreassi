@@ -14,50 +14,24 @@
  * Needs SUPABASE_SERVICE_ROLE_KEY (Netlify env, Functions scope).
  */
 import { randomInt } from 'node:crypto'
-import { SUPABASE_URL, SUPABASE_ANON_KEY } from '../../src/config/supabase.js'
+import { SUPABASE_URL } from '../../src/config/supabase.js'
+import { json, requireAdmin, roleOf as roleFor, serviceHeaders, serviceRest } from '../lib/admin.mjs'
 
-const ALLOWED_ORIGINS = new Set(['https://kreassiteam.com', 'https://www.kreassiteam.com'])
 const EMAIL_RE = /^[^\s@]{1,64}@[^\s@]{1,190}\.[^\s@]{2,}$/
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 // No look-alike characters (0/O, 1/l/I) — it's read out or typed by hand.
 const PASSWORD_ALPHABET = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789'
 
-const json = (status, body) => new Response(JSON.stringify(body), { status, headers: { 'content-type': 'application/json', 'cache-control': 'no-store' } })
 export const tempPassword = (length = 14) => Array.from({ length }, () => PASSWORD_ALPHABET[randomInt(PASSWORD_ALPHABET.length)]).join('')
 
-const serviceHeaders = (key, extra = {}) => ({
-    apikey: key,
-    ...(key.startsWith('sb_') ? {} : { authorization: `Bearer ${key}` }), // legacy JWT keys
-    'content-type': 'application/json',
-    ...extra,
-})
-
 export default async (req) => {
-    if (req.method !== 'POST') return json(405, { error: 'Method not allowed' })
-    const origin = req.headers.get('origin')
-    if (origin && !ALLOWED_ORIGINS.has(origin)) return json(403, { error: 'Forbidden' })
+    // 1–2. Signed in, and on the team.
+    const { key, caller, response } = await requireAdmin(req, { name: 'admin-team' })
+    if (response) return response
 
-    const key = process.env.SUPABASE_SERVICE_ROLE_KEY
-    if (!key) {
-        console.error('[admin-team] SUPABASE_SERVICE_ROLE_KEY is not set')
-        return json(500, { error: 'Server is not configured. Add SUPABASE_SERVICE_ROLE_KEY in Netlify.' })
-    }
-
-    // 1. Who is calling? Supabase validates the session token.
-    const token = (req.headers.get('authorization') || '').replace(/^Bearer\s+/i, '')
-    if (!token) return json(401, { error: 'Please sign in again.' })
-    const who = await fetch(`${SUPABASE_URL}/auth/v1/user`, { headers: { apikey: SUPABASE_ANON_KEY, authorization: `Bearer ${token}` } })
-    if (!who.ok) return json(401, { error: 'Your session has expired. Please sign in again.' })
-    const caller = await who.json()
-
-    // 2. Only admins manage the team.
-    const rest = (path, init = {}) => fetch(`${SUPABASE_URL}/rest/v1/${path}`, { ...init, headers: serviceHeaders(key, init.headers) })
+    const rest = (path, init = {}) => serviceRest(key, path, init)
     const auth = (path, init = {}) => fetch(`${SUPABASE_URL}/auth/v1/admin/${path}`, { ...init, headers: serviceHeaders(key, init.headers) })
-    const roleOf = async (userId) => {
-        const res = await rest(`admins?user_id=eq.${userId}&select=role`)
-        return res.ok ? (await res.json())[0]?.role ?? null : null
-    }
-    if (!(await roleOf(caller.id))) return json(403, { error: 'Only admins can manage the team.' })
+    const roleOf = (userId) => roleFor(key, userId)
 
     let body
     try { body = await req.json() } catch { return json(400, { error: 'Invalid request.' }) }

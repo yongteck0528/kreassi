@@ -1,24 +1,19 @@
 <!doctype html>
-<html lang="en">
+<html lang="id">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-    <title>Blog — Kreassi Team</title>
-    <meta
-      name="description"
-      content="Insights, tips, and client stories from Kreassi Team — social media and content marketing for small businesses in Pontianak."
-    />
-    <!-- noindex until the blog has published content; remove when the first posts go live. -->
-    <meta name="robots" content="noindex, follow" />
-    <link rel="canonical" href="https://kreassiteam.com/blog" />
+    <!-- Page shell for the blog. scripts/build-blog.mjs fills in each page
+         (title, description, social tags, header, article, footer) after
+         `vite build`; this file itself is never served. -->
+    <!--blog:head-->
     <meta name="theme-color" content="#371055" />
     <link rel="icon" href="/favicon.ico" sizes="any" />
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
   </head>
-  <body>
-    <div id="blog-app"></div>
+  <body class="bg-white">
+    <!--blog:body-->
     <script type="module" src="/src/blog/main.js"></script>
   </body>
 </html>

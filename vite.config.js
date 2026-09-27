@@ -3,8 +3,9 @@ import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 
 // https://vite.dev/config/
-// Multi-page build: the homepage (index.html) and the blog (blog.html) are
+// Multi-page build: the homepage (index.html) and the blog shell (blog.html) are
 // separate entry points, so the homepage bundle is unaffected by blog changes.
+// scripts/build-blog.mjs then turns the blog shell into the actual pages.
 // The admin area is a separate build entirely (vite.admin.config.js) so it
 // can't change what public pages download.
 export default defineConfig({

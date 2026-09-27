@@ -86,7 +86,7 @@ export function initAnalytics() {
         }
 
         const link = el.closest('a[href]')
-        if (!link) return
+        if (!link || link.closest('[data-share]')) return // sharing a blog post isn't contacting us
         const href = link.getAttribute('href') || ''
         let channel = null
         if (href.startsWith('mailto:')) channel = 'email'

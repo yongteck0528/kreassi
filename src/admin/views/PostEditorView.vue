@@ -12,9 +12,10 @@ import { useCategories } from '../composables/useCategories'
 import { useTeam } from '../composables/useTeam'
 import { supabase } from '../lib/supabase'
 import { createExtensions } from '../editor/extensions'
-import { INSTAGRAM_URL_RE } from '../editor/InstagramCard'
+import { INSTAGRAM_URL_RE } from '../../blog/content.js'
 import { publicUrl, uploadImage } from '../lib/images'
 import { analyzeDoc } from '../lib/seo'
+import { livePostUrl, rebuildSite, REBUILD_TIME } from '../lib/site'
 import { formatDate, slugify, SLUG_RE, timeAgo } from '../lib/text'
 
 const props = defineProps({ id: { type: String, required: true } })
@@ -43,6 +44,7 @@ const slugTouched = ref(false)
 const busy = ref('')
 const actionError = ref('')
 const notice = ref('')
+const siteWarning = ref('') // the change is saved, but the website didn't update
 const uploading = ref(false)
 const coverUploading = ref(false)
 const settingsOpen = ref(false)
@@ -205,8 +207,15 @@ const run = async (kind, fn) => {
     busy.value = kind
     actionError.value = ''
     notice.value = ''
+    siteWarning.value = ''
     try { await fn() } catch (error) { actionError.value = errorMessage(error) } finally { busy.value = '' }
 }
+// The website is rebuilt whenever what readers see changes.
+const goLive = async (message) => {
+    notice.value = message
+    siteWarning.value = await rebuildSite()
+}
+
 const reloadWorkingCopy = async () => {
     Object.assign(doc, live.value.pending ? pick({ ...live.value, ...live.value.pending }) : pick(live.value))
     lastSaved = snapshot.value
@@ -222,18 +231,18 @@ const publish = () => run('publish', async () => {
     if (!(await flush())) { actionError.value = saveError.value || 'Please fix the errors first.'; return }
     const ok = await ask({
         title: 'Publish this post?',
-        message: `It will live at kreassiteam.com/blog/${doc.slug}\n\nPublished posts appear on the website once the public blog launches.`,
+        message: `It will be live at kreassiteam.com/blog/${doc.slug}/ in ${REBUILD_TIME}, while the website updates.`,
         confirmLabel: 'Publish',
     })
     if (!ok) return
-    if (await guardedUpdate({ status: 'published' })) notice.value = 'Published.'
+    if (await guardedUpdate({ status: 'published' })) await goLive(`Published. It will be on the website in ${REBUILD_TIME}.`)
 })
 
 const updatePost = () => run('update', async () => {
     if (!(await flush())) { actionError.value = saveError.value || 'Please fix the errors first.'; return }
     if (await guardedUpdate({ ...fields(), pending: null })) {
         await reloadWorkingCopy()
-        notice.value = 'The live post is updated.'
+        await goLive(`Updated. The website shows the changes in ${REBUILD_TIME}.`)
     }
 })
 
@@ -254,7 +263,10 @@ const unpublish = () => run('unpublish', async () => {
         confirmLabel: 'Unpublish',
     })
     if (!ok || !(await flush())) return
-    if (await guardedUpdate({ ...fields(), status: 'draft' })) await reloadWorkingCopy()
+    if (await guardedUpdate({ ...fields(), status: 'draft' })) {
+        await reloadWorkingCopy()
+        await goLive(`Moved back to Drafts. It leaves the website in ${REBUILD_TIME}.`)
+    }
 })
 
 const deletePost = () => run('delete', async () => {
@@ -268,8 +280,10 @@ const deletePost = () => run('delete', async () => {
     if (!ok) return
     clearTimeout(timer)
     timer = null
+    const wasLive = isPublished.value
     const { error } = await supabase.from('posts').delete().eq('id', props.id)
     if (error) throw error
+    if (wasLive) rebuildSite() // take it off the website; nothing left here to show a warning on
     live.value = null
     posts.remove(props.id)
     router.push({ name: 'posts' })
@@ -497,6 +511,9 @@ const btnPrimary = 'inline-flex items-center gap-1.5 rounded-lg bg-darkPurple px
                         </button>
                         <div v-if="menuOpen" class="fixed inset-0 z-30" @click="menuOpen = false"></div>
                         <div v-if="menuOpen" class="absolute right-0 z-40 mt-1 w-48 rounded-xl border border-gray-200 bg-white py-1 shadow-lg" role="menu">
+                            <a v-if="isPublished" :href="livePostUrl(live.slug)" target="_blank" rel="noopener" role="menuitem" class="flex w-full items-center gap-2 px-3 py-2 text-left text-sm text-gray-700 hover:bg-gray-50" @click="menuOpen = false">
+                                <Icon icon="mdi:open-in-new" class="h-4 w-4" />View on website
+                            </a>
                             <button v-if="isPublished" type="button" role="menuitem" class="flex w-full items-center gap-2 px-3 py-2 text-left text-sm text-gray-700 hover:bg-gray-50" @click="unpublish">
                                 <Icon icon="mdi:eye-off-outline" class="h-4 w-4" />Unpublish
                             </button>
@@ -525,6 +542,9 @@ const btnPrimary = 'inline-flex items-center gap-1.5 rounded-lg bg-darkPurple px
             </div>
             <div v-else-if="notice" role="status" class="flex items-center gap-2 border-b border-green-200 bg-green-50 px-4 py-2 text-sm text-green-900">
                 <Icon icon="mdi:check-circle-outline" class="h-4 w-4 shrink-0" />{{ notice }}
+            </div>
+            <div v-if="siteWarning" role="alert" class="flex items-center gap-2 border-b border-amber-200 bg-amber-50 px-4 py-2 text-sm text-amber-900">
+                <Icon icon="mdi:alert-outline" class="h-4 w-4 shrink-0" />{{ siteWarning }}
             </div>
 
             <!-- Document -->
@@ -587,7 +607,7 @@ const btnPrimary = 'inline-flex items-center gap-1.5 rounded-lg bg-darkPurple px
                             @input="slugTouched = true" />
                     </div>
                     <p v-if="slugError" class="mt-1 text-xs text-red-700">{{ slugError }}</p>
-                    <p v-else-if="slugChangedOnLive" class="mt-1 text-xs text-amber-700">Changing a published post’s URL breaks links people already shared.</p>
+                    <p v-else-if="slugChangedOnLive" class="mt-1 text-xs text-amber-700">The old address will keep working — it redirects to the new one.</p>
                     <p v-else class="mt-1 text-xs text-gray-500">Follows the title until you edit it.</p>
                 </div>
 

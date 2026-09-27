@@ -1,7 +1,5 @@
 import { Node } from '@tiptap/vue-3'
 
-export const INSTAGRAM_URL_RE = /^https:\/\/(www\.)?instagram\.com\/(p|reel|tv)\/[A-Za-z0-9_-]+\/?(\?[^\s]*)?$/
-
 /**
  * An Instagram post shown as a lightweight link card — no Instagram embed
  * script (which is heavy and slows pages down).
